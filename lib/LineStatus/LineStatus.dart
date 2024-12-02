@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gmc/LineStatus/GroupButton.dart';
+import 'package:gmc/LineStatus/LineButton.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
 import 'package:gmc/myutility.dart';
 
@@ -17,49 +18,72 @@ class _LineStatusState extends State<LineStatus> {
       width: MyUtility(context).width,
       height: MyUtility(context).height,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 25,
+          ),
           Image.asset("images/GMC_Logo_White_Background_Black_Text 1.png"),
           SizedBox(
-            height: 10,
+            height: 20,
           ),
-          GroupButton(
-            buttonText: 'Group',
-            onTap: () {},
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Container(
-            height: 100,
-            decoration: BoxDecoration(
-              color: GMCColors.lightGrey,
-              borderRadius: BorderRadius.circular(12.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  offset: Offset(4, 0),
-                  blurRadius: 6.0,
+          Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GroupButton(
+                  buttonText: 'Group',
+                  onTap: () {},
                 ),
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  offset: Offset(0, -4),
-                  blurRadius: 6.0,
+                SizedBox(
+                  height: 20,
                 ),
+                Container(
+                  height: MyUtility(context).height * 0.7,
+                  decoration: BoxDecoration(
+                    color: GMCColors.lightGrey,
+                    borderRadius: BorderRadius.circular(12.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: Offset(0, -4), // Shadow on the top
+                        blurRadius: 4.0,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        offset: Offset(4, 0), // Shadow on the right
+                        blurRadius: 4.0,
+                      ),
+                    ],
+                  ),
+                  child: Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.all(8.0),
+                      children: [
+                        LineButton(
+                          lineLabel: 'Line 1',
+                          isAttending: false,
+                          isOnline: true,
+                          onTap: () {},
+                        ),
+                        LineButton(
+                          lineLabel: 'Line 2',
+                          isAttending: false,
+                          isOnline: true,
+                          onTap: () {},
+                        ),
+                        LineButton(
+                          lineLabel: 'Line 3',
+                          isAttending: false,
+                          isOnline: true,
+                          onTap: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               ],
-              border: Border.all(
-                color: Colors.black,
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'Styled Container',
-                style: TextStyle(
-                  color: GMCColors.green,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ),
           )
         ],
