@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gmc/LineStatus/GroupButton.dart';
 import 'package:gmc/MainComponants/reusable_black_textfield.dart';
+import 'package:gmc/MobileNavBar/MobileNavBar.dart';
 import 'package:gmc/myutility.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(20.0),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -34,7 +35,18 @@ class _LoginPageState extends State<LoginPage> {
             BlackTextField(
                 title: 'Password', controller: _loginPasswordController),
             Spacer(),
-            GroupButton(buttonText: 'Login', onTap: () {})
+            GroupButton(
+              buttonText: 'Login',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MobileNavBar(),
+                  ),
+                );
+              },
+              centerText: true,
+            )
           ],
         ),
       ),
