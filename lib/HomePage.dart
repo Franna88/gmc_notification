@@ -14,8 +14,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return const Material(
-      color: Colors.white,
       child: Scaffold(
+        backgroundColor: Colors.white,
         body:
             // MobileNavBar(),
             LoginPage(),
