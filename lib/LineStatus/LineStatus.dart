@@ -32,8 +32,35 @@ class _LineStatusState extends State<LineStatus> {
           Container(
             height: 100,
             decoration: BoxDecoration(
-                color: GMCColors.lightTeal,
-                borderRadius: BorderRadius.circular(12)),
+              color: GMCColors.lightGrey,
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.4),
+                  offset: Offset(4, 0),
+                  blurRadius: 6.0,
+                ),
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.4),
+                  offset: Offset(0, -4),
+                  blurRadius: 6.0,
+                ),
+              ],
+              border: Border.all(
+                color: Colors.black,
+                width: 1.5,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                'Styled Container',
+                style: TextStyle(
+                  color: GMCColors.green,
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
           )
         ],
       ),

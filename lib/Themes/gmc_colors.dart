@@ -13,4 +13,5 @@ class GMCColors {
   static const Color purple = Color(0xFF6A0572); // rgba(106, 5, 114, 1)
   static const Color orange = Color(0xFFFF5722); // rgba(255, 87, 34, 1)
   static const Color darkBrown = Color(0xFF303030); // rgba(48, 48, 48, 1)
+  static const Color lightGrey = Color(0xFFE6E6E6); // rgba(230, 230, 230, 1)
 }
