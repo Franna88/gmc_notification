@@ -13,9 +13,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: MobileNavBar(),
-      // LoginPage(),
+    return const Material(
+      color: Colors.white,
+      child: Scaffold(
+        body:
+            // MobileNavBar(),
+            LoginPage(),
+      ),
     );
   }
 }
