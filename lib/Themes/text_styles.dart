@@ -1,52 +1,67 @@
 import 'package:flutter/material.dart';
 
+import 'package:gmc/Themes/gmc_colors.dart'; // Import the file where GMCColors is defined.
+
 class TextStyles {
+  BuildContext context;
+  TextStyles(this.context);
+
+  double get width => MediaQuery.of(context).size.width;
+
   // Large heading style
-  static const TextStyle headingLarge = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 24,
-    fontWeight: FontWeight.bold,
-  );
+  TextStyle get headingLarge => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.bold,
+        fontSize: width / 16, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Medium heading style
-  static const TextStyle headingMedium = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-  );
+  TextStyle get headingMedium => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w600,
+        fontSize: width / 25, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Regular body text style
-  static const TextStyle bodyText = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    fontWeight: FontWeight.normal,
-  );
+  TextStyle get bodyText => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.normal,
+        fontSize: width / 31, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Small body text style
-  static const TextStyle bodySmall = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 14,
-    fontWeight: FontWeight.normal,
-  );
+  TextStyle get bodySmall => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.normal,
+        fontSize: width / 38, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Italic style
-  static const TextStyle italic = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    fontStyle: FontStyle.italic,
-  );
+  TextStyle get italic => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.normal,
+        fontSize: width / 31, // Adjust based on screen width
+        fontStyle: FontStyle.italic,
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Bold text style
-  static const TextStyle bold = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-  );
+  TextStyle get bold => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.bold,
+        fontSize: width / 31, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 
   // Light text style
-  static const TextStyle light = TextStyle(
-    fontFamily: 'Roboto',
-    fontSize: 16,
-    fontWeight: FontWeight.w300,
-  );
+  TextStyle get light => TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w300,
+        fontSize: width / 31, // Adjust based on screen width
+        color: GMCColors.darkGrey, // Set the color
+      );
 }
