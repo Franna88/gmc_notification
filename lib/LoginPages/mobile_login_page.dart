@@ -4,14 +4,14 @@ import 'package:gmc/MainComponants/reusable_black_textfield.dart';
 import 'package:gmc/MobileNavBar/MobileNavBar.dart';
 import 'package:gmc/myutility.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class MobileLoginPage extends StatefulWidget {
+  const MobileLoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<MobileLoginPage> createState() => _MobileLoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _MobileLoginPageState extends State<MobileLoginPage> {
   final TextEditingController _loginEmailController = TextEditingController();
   final TextEditingController _loginPasswordController =
       TextEditingController();
@@ -25,16 +25,15 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Image.asset(
-              'images/GMC_Logo_White_Background_Black_Text 1.png',
-              width: MyUtility(context).width * 0.4,
-              height: MyUtility(context).height * 0.4,
+              'images/gmc_logo.png',
+              width: MyUtility(context).width * 0.35,
+              height: MyUtility(context).height * 0.35,
             ),
             const SizedBox(height: 20),
             BlackTextField(title: 'Email', controller: _loginEmailController),
             const SizedBox(height: 10),
             BlackTextField(
-                title: 'Password Desktop',
-                controller: _loginPasswordController),
+                title: 'Password', controller: _loginPasswordController),
             Spacer(),
             GroupButton(
               buttonText: 'Login',

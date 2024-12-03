@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gmc/LineStatus/LineStatus.dart';
+import 'package:gmc/MessagesPage/messages_page.dart';
+import 'package:gmc/ProfilePage/profile_page.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
 
 class MobileNavBar extends StatefulWidget {
@@ -14,11 +16,9 @@ class _MobileNavBarState extends State<MobileNavBar> {
   int _selectedIndex = 1;
 
   static const List<Widget> _pages = <Widget>[
-    Center(
-        child: Text('Messages Page', style: TextStyle(color: GMCColors.white))),
+    MessagesPage(),
     LineStatus(),
-    Center(
-        child: Text('Profile Page', style: TextStyle(color: GMCColors.white))),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {

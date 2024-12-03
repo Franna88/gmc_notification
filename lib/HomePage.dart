@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gmc/LoginPages/login_page.dart';
+import 'package:gmc/LoginPages/mobile_login_page.dart';
 
 import 'package:gmc/MobileNavBar/MobileNavBar.dart';
 
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         body:
             // MobileNavBar(),
-            LoginPage(),
+            MobileLoginPage(),
       ),
     );
   }
