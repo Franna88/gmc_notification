@@ -51,7 +51,7 @@ class _LineStatusState extends State<LineStatus> {
                     ),
                     SizedBox(height: 20),
                     Container(
-                      height: MyUtility(context).height * 0.7,
+                      height: MyUtility(context).height * 0.67,
                       decoration: BoxDecoration(
                         color: GMCColors.lightGrey,
                         borderRadius: BorderRadius.circular(12.0),
