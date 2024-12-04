@@ -30,7 +30,7 @@ class BlackTextField extends StatelessWidget {
         const SizedBox(height: 8), // Space between title and text field
         SizedBox(
           width: width, // Apply width if provided
-          height: 40, // Fixed height
+          height: 45, // Fixed height
           child: TextField(
             controller: controller,
             obscureText: obscureText,

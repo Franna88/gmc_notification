@@ -2,10 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
 
 class GroupButton extends StatelessWidget {
-  String buttonText;
-  VoidCallback onTap;
-  GroupButton({Key? key, required this.buttonText, required this.onTap})
-      : super(key: key);
+  final String buttonText;
+  final VoidCallback onTap;
+  final bool centerText; // Added conditional parameter
+
+  GroupButton({
+    Key? key,
+    required this.buttonText,
+    required this.onTap,
+    this.centerText = false, // Default is false
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +35,14 @@ class GroupButton extends StatelessWidget {
           Container(
             width: 145,
             decoration: BoxDecoration(
-              color: GMCColors.darkBrown,
+              color: GMCColors.darkGrey,
               borderRadius: BorderRadius.circular(12.0),
             ),
             padding:
                 const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12.0),
+            alignment: centerText
+                ? Alignment.center
+                : Alignment.centerLeft, // Conditionally center text
             child: Text(
               buttonText,
               style: TextStyle(

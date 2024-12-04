@@ -36,7 +36,7 @@ class TextStyles {
   TextStyle get bodySmall => TextStyle(
         fontFamily: 'Roboto',
         fontWeight: FontWeight.normal,
-        fontSize: width / 38, // Adjust based on screen width
+        fontSize: width / 28, // Adjust based on screen width
         color: GMCColors.darkGrey, // Set the color
       );
 
@@ -53,7 +53,7 @@ class TextStyles {
   TextStyle get bold => TextStyle(
         fontFamily: 'Roboto',
         fontWeight: FontWeight.bold,
-        fontSize: width / 31, // Adjust based on screen width
+        fontSize: width / 26, // Adjust based on screen width
         color: GMCColors.darkGrey, // Set the color
       );
 
