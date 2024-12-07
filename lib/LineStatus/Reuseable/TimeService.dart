@@ -14,13 +14,18 @@ class TimerService extends ChangeNotifier {
   int get secondsElapsed => _secondsElapsed;
 
   void startTimer(String documentId) {
-    if (_isRunning) return; // Prevent multiple timers from starting
+    if (_isRunning) {
+      debugPrint('Timer for $documentId is already running.');
+      return; // Prevent multiple timers from starting
+    }
 
     _isRunning = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       _secondsElapsed++;
       elapsedTimeNotifier.value = _secondsElapsed; // Update the notifier value
       notifyListeners(); // Notify listeners on each tick
+
+      debugPrint('Timer running: $_secondsElapsed seconds');
 
       // Add supervisor if timer reaches 60 seconds
       if (_secondsElapsed == 60) {
@@ -34,29 +39,24 @@ class TimerService extends ChangeNotifier {
       _timer?.cancel();
       _isRunning = false;
       notifyListeners();
+      debugPrint('Timer stopped at $_secondsElapsed seconds');
     }
   }
 
   void resetAndStartTimer(String documentId) {
-    _timer?.cancel(); //stopes time running
-    _secondsElapsed = 0; // Reset time
-    _isRunning = true;
-    elapsedTimeNotifier.value = _secondsElapsed;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _secondsElapsed++;
-      elapsedTimeNotifier.value = _secondsElapsed;
-      notifyListeners();
+    debugPrint('Resetting and starting timer for $documentId');
+    _timer?.cancel(); // Stops timer if running
+    _secondsElapsed = 0; // Reset elapsed time
+    elapsedTimeNotifier.value = _secondsElapsed; // Update notifier
+    notifyListeners();
 
-      // Add supervisor if timer reaches 60 seconds
-      if (_secondsElapsed == 60) {
-        _addSupervisorToDownedLines(documentId);
-      }
-    });
+    startTimer(documentId); // Start the timer after resetting
   }
 
   void resetTimer() {
-    _timer?.cancel(); // Stop any running timer
-    _timer = null; // Set timer reference to null
+    debugPrint('Resetting timer.');
+    _timer?.cancel();
+    _timer = null;
     _isRunning = false;
     _secondsElapsed = 0; // Reset elapsed time to zero
     elapsedTimeNotifier.value = _secondsElapsed; // Reset the notifier value
@@ -91,20 +91,21 @@ class TimerService extends ChangeNotifier {
               [FieldValue.serverTimestamp()],
             ),
           });
-          print('Supervisor added to DownedLines for line: $documentId');
+          debugPrint('Supervisor added to DownedLines for line: $documentId');
         } else {
-          print('No unresolved DownedLines found for line: $documentId');
+          debugPrint('No unresolved DownedLines found for line: $documentId');
         }
       } else {
-        print('No supervisor found in the users collection.');
+        debugPrint('No supervisor found in the users collection.');
       }
     } catch (error) {
-      print('Error adding supervisor to DownedLines: $error');
+      debugPrint('Error adding supervisor to DownedLines: $error');
     }
   }
 
   @override
   void dispose() {
+    debugPrint('Disposing TimerService.');
     _timer?.cancel();
     super.dispose();
   }

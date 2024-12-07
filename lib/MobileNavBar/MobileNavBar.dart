@@ -18,11 +18,11 @@ class MobileNavBarState extends State<MobileNavBar> {
   int _selectedIndex = 1;
   bool showLineAttend = false;
 
-  String lineLabel = 'Line 1';
+  String lineLabel = 'Line 2';
   String documentId = '';
   final UniversalTimer universalTimer = UniversalTimer();
 
-  // Add PageController to manage page switching
+  // PageController to manage page switching
   late PageController _pageController;
 
   @override
@@ -51,20 +51,22 @@ class MobileNavBarState extends State<MobileNavBar> {
   void _onLineSelected(
       String selectedLineLabel, int elapsedSeconds, String lineId) {
     setState(() {
-      // Store the current elapsed time before switching pages
-      if (documentId.isNotEmpty) {
-        TimerService currentTimer = universalTimer.getTimerForLine(documentId);
-        currentTimer.setElapsedTime(currentTimer.secondsElapsed);
-      }
-
+      // Update the selected line details
       lineLabel = selectedLineLabel;
       documentId = lineId;
       showLineAttend = true;
 
+      // Reuse the TimerService for the selected line
       TimerService timerService = universalTimer.getTimerForLine(documentId);
 
-      // Restore the elapsed time (if needed)
-      timerService.setElapsedTime(elapsedSeconds);
+      // Debug to confirm timer state before navigating
+      debugPrint(
+          'Navigating to LineAttend with elapsedSeconds: ${timerService.secondsElapsed}');
+
+      // Only set elapsed time if it's a fresh timer
+      if (timerService.secondsElapsed == 0) {
+        timerService.setElapsedTime(elapsedSeconds);
+      }
     });
 
     // Navigate to the LineAttend page
@@ -80,20 +82,15 @@ class MobileNavBarState extends State<MobileNavBar> {
         physics:
             const NeverScrollableScrollPhysics(), // Prevent swipe navigation
         children: [
-          // MessagesPage
           const MessagesPage(),
-          // LineStatus Page
           LineStatus(
             onLineSelected: _onLineSelected,
           ),
-          // ProfilePage
           const ProfilePage(),
-          // LineAttend Page
           LineAttend(
             lineLabel: lineLabel,
             documentId: documentId,
-            timerService: universalTimer
-                .getTimerForLine(documentId), // Get the TimerService instance
+            timerService: universalTimer.getTimerForLine(documentId),
           ),
         ],
       ),

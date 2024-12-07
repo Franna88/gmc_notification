@@ -12,8 +12,7 @@ import 'package:gmc/myutility.dart';
 class LineAttend extends StatefulWidget {
   final String lineLabel;
   final String documentId;
-  final TimerService
-      timerService; // Use the TimerService instance from UniversalTimer
+  final TimerService timerService;
 
   const LineAttend({
     required this.lineLabel,
@@ -26,25 +25,31 @@ class LineAttend extends StatefulWidget {
   State<LineAttend> createState() => _LineAttendState();
 }
 
-class _LineAttendState extends State<LineAttend> {
+class _LineAttendState extends State<LineAttend>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   late TimerService timerService;
   bool isAttending = false;
 
   @override
   void initState() {
     super.initState();
-    timerService =
-        widget.timerService; // Initialize with the passed TimerService instance
+    timerService = widget.timerService;
+    debugPrint(
+        'LineAttend initialized with TimerService: ${timerService.secondsElapsed} seconds');
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Ensure AutomaticKeepAliveClientMixin works
     return ValueListenableBuilder<int>(
       valueListenable: timerService.elapsedTimeNotifier,
       builder: (context, elapsedSeconds, child) {
-        return Container(
-          width: MyUtility(context).width,
-          height: MyUtility(context).height,
+        debugPrint(
+            'LineAttend UI updated for ${widget.documentId}: $elapsedSeconds seconds');
+        return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -57,6 +62,7 @@ class _LineAttendState extends State<LineAttend> {
                   lineLabel: widget.lineLabel,
                   isAttending: isAttending,
                   isOnline: false,
+                  offlineUi: false,
                   elapsedTime:
                       elapsedSeconds, // Pass elapsed time to LineButton
                   onTap: (_) {},
@@ -89,7 +95,7 @@ class _LineAttendState extends State<LineAttend> {
                       AttendingButton(
                         buttonText: 'ATTEND',
                         buttonColor:
-                            isAttending ? GMCColors.green : Colors.black,
+                            isAttending ? Colors.black : GMCColors.green,
                         onPressed: () {
                           showDialog(
                             context: context,
@@ -100,6 +106,7 @@ class _LineAttendState extends State<LineAttend> {
                           ).then((value) {
                             setState(() {
                               isAttending = true;
+                              debugPrint('User marked as attending');
                             });
                           });
                         },

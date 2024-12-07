@@ -138,6 +138,7 @@ class _LineStatusState extends State<LineStatus> {
                   'notificationTimestamps': [],
                   'technicianId': '',
                   'managerId': '',
+                  'totalDownTime': '',
                   'messages': [],
                 });
 

@@ -11,7 +11,11 @@ class UniversalTimer extends ChangeNotifier {
   final Map<String, TimerService> _timers = {};
 
   TimerService getTimerForLine(String lineId) {
-    return _timers.putIfAbsent(lineId, () => TimerService(this));
+    debugPrint('Fetching TimerService for lineId: $lineId');
+    return _timers.putIfAbsent(lineId, () {
+      debugPrint('Creating new TimerService for lineId: $lineId');
+      return TimerService(this);
+    });
   }
 }
 
@@ -34,16 +38,19 @@ class TimerService {
     _isRunning = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _secondsElapsed++;
-      elapsedTimeNotifier.value = _secondsElapsed; // Update elapsedTimeNotifier
-      _notifier.notifyListeners(); // Notify listeners on every tick
+      elapsedTimeNotifier.value = _secondsElapsed;
+      _notifier.notifyListeners();
+      debugPrint('Timer tick: $_secondsElapsed seconds'); // Debug log
     });
+    debugPrint('Timer started'); // Debug log
   }
 
   void stop() {
     if (_isRunning) {
       _timer?.cancel();
       _isRunning = false;
-      _notifier.notifyListeners(); // Notify listeners when stopped
+      _notifier.notifyListeners();
+      debugPrint('Timer stopped at $_secondsElapsed seconds'); // Debug log
     }
   }
 
@@ -52,6 +59,7 @@ class TimerService {
     _secondsElapsed = 0;
     elapsedTimeNotifier.value = _secondsElapsed; // Reset elapsedTimeNotifier
     _notifier.notifyListeners(); // Notify listeners after reset
+    debugPrint('Timer reset to 0'); // Debug log
   }
 
   void resetAndStart() {
@@ -61,8 +69,12 @@ class TimerService {
 
   // Method to manually set the elapsed time
   void setElapsedTime(int seconds) {
-    _secondsElapsed = seconds;
-    elapsedTimeNotifier.value = _secondsElapsed; // Update elapsedTimeNotifier
-    _notifier.notifyListeners(); // Notify listeners about the update
+    if (_secondsElapsed != seconds) {
+      debugPrint(
+          'Updating elapsed time for TimerService: $_secondsElapsed -> $seconds');
+      _secondsElapsed = seconds;
+      elapsedTimeNotifier.value = _secondsElapsed; // Update elapsedTimeNotifier
+      _notifier.notifyListeners(); // Notify listeners about the update
+    }
   }
 }
