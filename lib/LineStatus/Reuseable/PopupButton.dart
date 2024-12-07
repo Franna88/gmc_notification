@@ -24,7 +24,8 @@ class _PopupButtonState extends State<PopupButton> {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
-            offset: Offset(0, 4), // Shadow positioned slightly below the button
+            offset: const Offset(
+                0, 4), // Shadow positioned slightly below the button
             blurRadius: 4.0,
           ),
         ],
@@ -40,7 +41,7 @@ class _PopupButtonState extends State<PopupButton> {
         ),
         child: Text(
           widget.buttonText,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18.0,
             fontWeight: FontWeight.w500,

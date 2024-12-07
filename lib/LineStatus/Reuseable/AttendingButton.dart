@@ -4,8 +4,12 @@ import 'package:gmc/myutility.dart';
 class AttendingButton extends StatefulWidget {
   final String buttonText;
   final VoidCallback onPressed;
+  final Color buttonColor;
   const AttendingButton(
-      {super.key, required this.buttonText, required this.onPressed});
+      {super.key,
+      required this.buttonText,
+      required this.onPressed,
+      required this.buttonColor});
 
   @override
   State<AttendingButton> createState() => _AttendingButtonState();
@@ -22,7 +26,7 @@ class _AttendingButtonState extends State<AttendingButton> {
           width: MyUtility(context).width,
           height: 75,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color: widget.buttonColor,
             borderRadius: BorderRadius.circular(5),
           ),
           child: Center(

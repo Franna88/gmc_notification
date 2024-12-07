@@ -6,12 +6,12 @@ class GroupButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool centerText; // Added conditional parameter
 
-  GroupButton({
-    Key? key,
+  const GroupButton({
+    super.key,
     required this.buttonText,
     required this.onTap,
     this.centerText = false, // Default is false
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class GroupButton extends StatelessWidget {
                 : Alignment.centerLeft, // Conditionally center text
             child: Text(
               buttonText,
-              style: TextStyle(
+              style: const TextStyle(
                 color: GMCColors.orange,
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,

@@ -15,8 +15,8 @@ class _HomePageState extends State<HomePage> {
     return const Material(
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: MobileNavBar(),
-        // LoginPage(),
+        body: //MobileNavBar(),
+            LoginPage(),
       ),
     );
   }

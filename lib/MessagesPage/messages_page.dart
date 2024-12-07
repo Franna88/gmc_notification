@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gmc/MessagesPage/contact_tab.dart';
 import 'package:gmc/MessagesPage/messages_tab.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
@@ -56,7 +56,6 @@ class _MessagesPageState extends State<MessagesPage>
               },
               tabs: [
                 // Messages Tab
-
                 Tab(
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
@@ -69,7 +68,7 @@ class _MessagesPageState extends State<MessagesPage>
                           color: GMCColors
                               .white, // Apply color to match the text color
                         ),
-                        Spacer(),
+                        const Spacer(),
                         const Text(
                           'Messages',
                           style: TextStyle(
@@ -80,7 +79,7 @@ class _MessagesPageState extends State<MessagesPage>
                     ),
                   ),
                 ),
-// Contacts Tab
+                // Contacts Tab
                 Tab(
                   child: Padding(
                     padding: const EdgeInsets.all(6.0),
@@ -93,7 +92,7 @@ class _MessagesPageState extends State<MessagesPage>
                           color: GMCColors
                               .white, // Apply color to match the text color
                         ),
-                        Spacer(),
+                        const Spacer(),
                         const Text(
                           'Contacts',
                           style: TextStyle(
@@ -123,12 +122,12 @@ class _MessagesPageState extends State<MessagesPage>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
+              children: [
                 // Messages Tab Content
-                MessagesTab(),
+                const MessagesTab(),
 
                 // Contacts Tab Content
-                ContactTab(),
+                const ContactTab(),
               ],
             ),
           ),

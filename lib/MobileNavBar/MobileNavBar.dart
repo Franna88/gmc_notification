@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gmc/LineStatus/LineAttend.dart';
 import 'package:gmc/LineStatus/LineStatus.dart';
-import 'package:gmc/LineStatus/Reuseable/TimeService.dart';
+import 'package:gmc/LineStatus/Reuseable/UniversalTimer.dart';
 import 'package:gmc/MessagesPage/messages_page.dart';
 import 'package:gmc/ProfilePage/profile_page.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
@@ -19,57 +19,83 @@ class MobileNavBarState extends State<MobileNavBar> {
   bool showLineAttend = false;
 
   String lineLabel = 'Line 1';
-  TimerService timerService = TimerService();
+  String documentId = '';
+  final UniversalTimer universalTimer = UniversalTimer();
+
+  // Add PageController to manage page switching
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    timerService.startTimer();
+    // Initialize the PageController
+    _pageController = PageController(initialPage: 1);
   }
 
-  static List<Widget> _staticPages = <Widget>[
-    MessagesPage(),
-    LineStatus(
-      onLineSelected: (String selectedLineLabel, int elapsedSeconds) {},
-    ),
-    ProfilePage(),
-  ];
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      showLineAttend = false;
+      if (index != 1) {
+        showLineAttend = false;
+      }
     });
+    _pageController.jumpToPage(index);
+  }
+
+  void _onLineSelected(
+      String selectedLineLabel, int elapsedSeconds, String lineId) {
+    setState(() {
+      // Store the current elapsed time before switching pages
+      if (documentId.isNotEmpty) {
+        TimerService currentTimer = universalTimer.getTimerForLine(documentId);
+        currentTimer.setElapsedTime(currentTimer.secondsElapsed);
+      }
+
+      lineLabel = selectedLineLabel;
+      documentId = lineId;
+      showLineAttend = true;
+
+      TimerService timerService = universalTimer.getTimerForLine(documentId);
+
+      // Restore the elapsed time (if needed)
+      timerService.setElapsedTime(elapsedSeconds);
+    });
+
+    // Navigate to the LineAttend page
+    _pageController.jumpToPage(3);
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget currentPage;
-
-    if (_selectedIndex == 1 && showLineAttend) {
-      currentPage = LineAttend(
-        lineLabel: lineLabel,
-        initialSeconds: timerService.secondsElapsed,
-      );
-    } else if (_selectedIndex == 1) {
-      currentPage = LineStatus(
-        onLineSelected: (String selectedLineLabel, int elapsedSeconds) {
-          setState(() {
-            lineLabel = selectedLineLabel;
-            showLineAttend = true;
-          });
-        },
-        initialSeconds: timerService.secondsElapsed,
-      );
-    } else {
-      currentPage = _staticPages[_selectedIndex];
-    }
-
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.only(top: 25.0),
-        child: currentPage,
+      body: PageView(
+        controller: _pageController,
+        physics:
+            const NeverScrollableScrollPhysics(), // Prevent swipe navigation
+        children: [
+          // MessagesPage
+          const MessagesPage(),
+          // LineStatus Page
+          LineStatus(
+            onLineSelected: _onLineSelected,
+          ),
+          // ProfilePage
+          const ProfilePage(),
+          // LineAttend Page
+          LineAttend(
+            lineLabel: lineLabel,
+            documentId: documentId,
+            timerService: universalTimer
+                .getTimerForLine(documentId), // Get the TimerService instance
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: GMCColors.darkBrown,

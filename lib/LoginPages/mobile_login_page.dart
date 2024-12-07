@@ -35,14 +35,14 @@ class _MobileLoginPageState extends State<MobileLoginPage> {
             const SizedBox(height: 10),
             BlackTextField(
                 title: 'Password', controller: _loginPasswordController),
-            Spacer(),
+            const Spacer(),
             GroupButton(
               buttonText: 'Login',
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MobileNavBar(),
+                    builder: (context) => const MobileNavBar(),
                   ),
                 );
               },

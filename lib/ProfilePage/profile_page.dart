@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
-      child: Container(
+      child: SizedBox(
         width: MyUtility(context).width,
         height: MyUtility(context).height,
         child: SingleChildScrollView(
@@ -38,10 +38,10 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Column(
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 10,
                   ),
                   Container(

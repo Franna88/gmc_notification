@@ -8,7 +8,8 @@ class BlueButton extends StatelessWidget {
   final double? width;
   final VoidCallback onPressed;
 
-  BlueButton({
+  const BlueButton({
+    super.key,
     required this.text,
     required this.onPressed,
     this.width,

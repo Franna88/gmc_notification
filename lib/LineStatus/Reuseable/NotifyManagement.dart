@@ -23,8 +23,8 @@ class _NotifyManagementState extends State<NotifyManagement> {
             color: GMCColors.darkTeal,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

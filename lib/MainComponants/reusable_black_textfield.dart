@@ -10,13 +10,13 @@ class BlackTextField extends StatelessWidget {
   final double? width; // Optional width property
 
   const BlackTextField({
-    Key? key,
+    super.key,
     required this.title,
     required this.controller,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.width, // Optional parameter for width
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +36,20 @@ class BlackTextField extends StatelessWidget {
             obscureText: obscureText,
             keyboardType: keyboardType,
             style: const TextStyle(color: GMCColors.white),
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               filled: true,
               fillColor: GMCColors.darkGrey,
-              border: const OutlineInputBorder(
+              border: OutlineInputBorder(
                 borderSide: BorderSide(color: GMCColors.darkGrey),
                 borderRadius:
                     BorderRadius.all(Radius.circular(6)), // Border radius
               ),
-              enabledBorder: const OutlineInputBorder(
+              enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: GMCColors.darkGrey),
                 borderRadius:
                     BorderRadius.all(Radius.circular(6)), // Border radius
               ),
-              focusedBorder: const OutlineInputBorder(
+              focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: GMCColors.darkGrey),
                 borderRadius:
                     BorderRadius.all(Radius.circular(6)), // Border radius

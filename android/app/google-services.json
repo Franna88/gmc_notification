@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "495285712978",
+    "project_id": "gmc-95f76",
+    "storage_bucket": "gmc-95f76.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495285712978:android:ec8dc8907ae0e895bac78b",
+        "android_client_info": {
+          "package_name": "com.example.gmc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCYePSsunVp8cDXRqrkpVG-8J5pgCVV4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

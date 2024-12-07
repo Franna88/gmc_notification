@@ -2,15 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gmc/LineStatus/Reuseable/PopupButton.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AttendingPopup extends StatefulWidget {
-  const AttendingPopup({super.key});
+  final String documentId; // Document ID to track the Firestore document
+
+  const AttendingPopup({required this.documentId, super.key});
 
   @override
   State<AttendingPopup> createState() => _AttendingPopupState();
 }
 
 class _AttendingPopupState extends State<AttendingPopup> {
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -23,7 +29,7 @@ class _AttendingPopupState extends State<AttendingPopup> {
           // Header
           Container(
             width: double.infinity,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: GMCColors.darkGrey,
               borderRadius: BorderRadius.vertical(
                 top: Radius.circular(6.0),
@@ -39,7 +45,7 @@ class _AttendingPopupState extends State<AttendingPopup> {
                       Navigator.of(context).pop();
                     },
                     child: SvgPicture.asset('images/popback.svg')),
-                Text(
+                const Text(
                   'ATTEND',
                   style: TextStyle(
                     fontSize: 20.0,
@@ -47,13 +53,13 @@ class _AttendingPopupState extends State<AttendingPopup> {
                     color: GMCColors.orange,
                   ),
                 ),
-                SizedBox(width: 24.0),
+                const SizedBox(width: 24.0),
               ],
             ),
           ),
           Container(
             padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(
                 bottom: Radius.circular(6.0),
@@ -65,9 +71,9 @@ class _AttendingPopupState extends State<AttendingPopup> {
                 const SizedBox(height: 16.0),
                 // Message
                 Text(
-                  '"User Name" you will be attending to this issue?',
+                  '${currentUser?.displayName ?? "User"} you will be attending to this issue?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
@@ -80,7 +86,57 @@ class _AttendingPopupState extends State<AttendingPopup> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     PopupButton(
-                      onTap: () {},
+                      onTap: () {
+                        if (currentUser != null) {
+                          // Get technician info
+                          String technicianId = currentUser!.uid;
+                          String technicianName =
+                              currentUser!.displayName ?? "Unknown Technician";
+
+                          // Update the systems collection to mark as attending
+                          FirebaseFirestore.instance
+                              .collection('systems')
+                              .doc(widget.documentId)
+                              .update({'attending': true}).then((_) {
+                            // Also update the downedLines collection with the technician info
+                            FirebaseFirestore.instance
+                                .collection('downedLines')
+                                .where('lineId', isEqualTo: widget.documentId)
+                                .where('status', isEqualTo: 'unresolved')
+                                .orderBy('timestamp', descending: true)
+                                .limit(1)
+                                .get()
+                                .then((snapshot) {
+                              if (snapshot.docs.isNotEmpty) {
+                                snapshot.docs.first.reference.update({
+                                  'technicianId': technicianId,
+                                  'technicianName': technicianName,
+                                  'status': 'attending',
+                                }).then((_) {
+                                  print(
+                                      'Technician assigned to downed line successfully.');
+
+                                  // Close the dialog and return to previous screen
+                                  Navigator.of(context).pop();
+                                }).catchError((error) {
+                                  print('Failed to update downedLines: $error');
+                                });
+                              } else {
+                                print(
+                                    'No matching downedLines document found.');
+                              }
+                            }).catchError((error) {
+                              print(
+                                  'Failed to get downedLines document: $error');
+                            });
+                          }).catchError((error) {
+                            print(
+                                'Failed to update systems collection: $error');
+                          });
+                        } else {
+                          print('No logged-in user found.');
+                        }
+                      },
                       buttonColor: GMCColors.orange,
                       buttonText: "Accept",
                     ),
