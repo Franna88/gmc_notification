@@ -50,100 +50,105 @@ class _LineAttendState extends State<LineAttend>
         debugPrint(
             'LineAttend UI updated for ${widget.documentId}: $elapsedSeconds seconds');
         return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 25),
-              Image.asset("images/GMC_Logo_White_Background_Black_Text 1.png"),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: LineButton(
-                  lineLabel: widget.lineLabel,
-                  isAttending: isAttending,
-                  isOnline: false,
-                  offlineUi: false,
-                  elapsedTime:
-                      elapsedSeconds, // Pass elapsed time to LineButton
-                  onTap: (_) {},
-                ),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15),
-                child: Container(
-                  height: MyUtility(context).height * 0.6,
-                  decoration: BoxDecoration(
-                    color: GMCColors.lightGrey,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(0, -4),
-                        blurRadius: 4.0,
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(4, 0),
-                        blurRadius: 4.0,
-                      ),
-                    ],
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 25),
+                Image.asset(
+                    "images/GMC_Logo_White_Background_Black_Text 1.png"),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: LineButton(
+                    lineLabel: widget.lineLabel,
+                    isAttending: isAttending,
+                    isOnline: false,
+                    offlineUi: false,
+                    elapsedTime:
+                        elapsedSeconds, // Pass elapsed time to LineButton
+                    onTap: (_) {},
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      AttendingButton(
-                        buttonText: 'ATTEND',
-                        buttonColor:
-                            isAttending ? Colors.black : GMCColors.green,
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AttendingPopup(
-                                  documentId: widget.documentId);
-                            },
-                          ).then((value) {
-                            setState(() {
-                              isAttending = true;
-                              debugPrint('User marked as attending');
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  child: Container(
+                    height: MyUtility(context).height * 0.6,
+                    decoration: BoxDecoration(
+                      color: GMCColors.lightGrey,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(0, -4),
+                          blurRadius: 4.0,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(4, 0),
+                          blurRadius: 4.0,
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        AttendingButton(
+                          buttonText: 'ATTEND',
+                          buttonColor:
+                              isAttending ? Colors.black : GMCColors.green,
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AttendingPopup(
+                                    documentId: widget.documentId);
+                              },
+                            ).then((value) {
+                              setState(() {
+                                isAttending = true;
+                                debugPrint('User marked as attending');
+                              });
                             });
-                          });
-                        },
-                      ),
-                      AttendingButton(
-                        buttonText: 'CAUSE',
-                        buttonColor: Colors.black,
-                        onPressed: () {
-                          showDialog(
-                            useSafeArea: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CausePopup(documentId: widget.documentId);
-                            },
-                          );
-                        },
-                      ),
-                      AttendingButton(
-                        buttonText: 'RESOLVED',
-                        buttonColor: Colors.black,
-                        onPressed: () {
-                          showDialog(
-                            useSafeArea: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ResolvedPopup(
-                                  documentId: widget.documentId);
-                            },
-                          );
-                        },
-                      ),
-                      NotifyManagement(isNotified: true),
-                    ],
+                          },
+                        ),
+                        AttendingButton(
+                          buttonText: 'CAUSE',
+                          buttonColor: Colors.black,
+                          onPressed: () {
+                            showDialog(
+                              useSafeArea: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return CausePopup(
+                                    documentId: widget.documentId);
+                              },
+                            );
+                          },
+                        ),
+                        AttendingButton(
+                          buttonText: 'RESOLVED',
+                          buttonColor: Colors.black,
+                          onPressed: () {
+                            showDialog(
+                              useSafeArea: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ResolvedPopup(
+                                    documentId: widget.documentId);
+                              },
+                            );
+                          },
+                        ),
+                        NotifyManagement(isNotified: true),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
