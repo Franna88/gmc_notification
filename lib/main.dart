@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gmc/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:gmc/api/firebase-api.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ void main() async {
     } else {
       // Initialize Firebase for mobile
       await Firebase.initializeApp();
+      await FirebaseApi().initNotifications();
     }
     print("Firebase initialized successfully");
   } catch (e) {
