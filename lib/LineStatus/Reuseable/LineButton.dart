@@ -11,6 +11,7 @@ class LineButton extends StatefulWidget {
   final int elapsedTime; // Added elapsedTime parameter
   final Function(int) onTap;
   bool offlineUi;
+  bool navigatePage;
 
   LineButton({
     required this.lineLabel,
@@ -19,6 +20,7 @@ class LineButton extends StatefulWidget {
     required this.elapsedTime, // Initialized elapsedTime parameter
     required this.onTap,
     this.offlineUi = true,
+    this.navigatePage = true,
     Key? key,
   }) : super(key: key);
 
@@ -27,7 +29,7 @@ class LineButton extends StatefulWidget {
 }
 
 class _LineButtonState extends State<LineButton> {
-  late final TimerService timerService;
+  late final NewTimeService timerService;
 
   @override
   void initState() {
@@ -70,20 +72,22 @@ class _LineButtonState extends State<LineButton> {
       animation: UniversalTimer(),
       builder: (context, _) {
         return GestureDetector(
-          onTap: () {
-            setState(() {
-              widget.isOnline = !widget.isOnline;
+          onTap: widget.navigatePage
+              ? null
+              : () {
+                  setState(() {
+                    widget.isOnline = !widget.isOnline;
 
-              if (widget.isOnline) {
-                timerService.reset();
-              } else {
-                timerService.start();
-              }
-            });
+                    if (widget.isOnline) {
+                      timerService.reset();
+                    } else {
+                      timerService.start();
+                    }
+                  });
 
-            // Pass the current elapsed time to the parent callback
-            widget.onTap(timerService.secondsElapsed);
-          },
+                  // Pass the current elapsed time to the parent callback
+                  widget.onTap(timerService.secondsElapsed);
+                },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
