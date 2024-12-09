@@ -12,7 +12,7 @@ import 'package:gmc/myutility.dart';
 class LineAttend extends StatefulWidget {
   final String lineLabel;
   final String documentId;
-  final TimerService timerService;
+  final NewTimeService timerService;
 
   const LineAttend({
     required this.lineLabel,
@@ -30,7 +30,7 @@ class _LineAttendState extends State<LineAttend>
   @override
   bool get wantKeepAlive => true;
 
-  late TimerService timerService;
+  late NewTimeService timerService;
   bool isAttending = false;
 
   @override
@@ -63,6 +63,7 @@ class _LineAttendState extends State<LineAttend>
                   isAttending: isAttending,
                   isOnline: false,
                   offlineUi: false,
+                  navigatePage: true,
                   elapsedTime:
                       elapsedSeconds, // Pass elapsed time to LineButton
                   onTap: (_) {},
@@ -95,7 +96,7 @@ class _LineAttendState extends State<LineAttend>
                       AttendingButton(
                         buttonText: 'ATTEND',
                         buttonColor:
-                            isAttending ? Colors.black : GMCColors.green,
+                            isAttending ? GMCColors.green : Colors.black,
                         onPressed: () {
                           showDialog(
                             context: context,

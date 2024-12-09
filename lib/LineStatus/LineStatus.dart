@@ -41,7 +41,8 @@ class _LineStatusState extends State<LineStatus> {
         bool online = data['online'] ?? true;
 
         // Get TimerService from UniversalTimer
-        TimerService timerService = universalTimer.getTimerForLine(documentId);
+        NewTimeService timerService =
+            universalTimer.getTimerForLine(documentId);
 
         if (online) {
           // Line is online: stop the timer and save elapsed time only if it is running
@@ -139,7 +140,8 @@ class _LineStatusState extends State<LineStatus> {
                   'technicianId': '',
                   'managerId': '',
                   'totalDownTime': '',
-                  'messages': [],
+                  'supervisorId': '',
+                  'supervisorName': '',
                 });
 
                 // Update isAlreadyDown to true and clear the isUpdating flag after successful transaction
@@ -227,7 +229,7 @@ class _LineStatusState extends State<LineStatus> {
                           String documentId = lineData.id;
 
                           // TimerService instance for each line from UniversalTimer
-                          TimerService timerService =
+                          NewTimeService timerService =
                               universalTimer.getTimerForLine(documentId);
 
                           print(
@@ -239,6 +241,7 @@ class _LineStatusState extends State<LineStatus> {
                               return LineButton(
                                 lineLabel: lineName,
                                 isOnline: online,
+                                navigatePage: online,
                                 isAttending: isAttending,
                                 elapsedTime: timerService.secondsElapsed,
                                 onTap: (int elapsedSeconds) {

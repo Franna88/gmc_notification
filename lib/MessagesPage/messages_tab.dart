@@ -28,87 +28,158 @@ class MessagesTab extends StatelessWidget {
             .collection('resolutionChats')
             .where('participants', arrayContains: currentUserId)
             .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
+        builder: (context, resolutionSnapshot) {
+          if (!resolutionSnapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final chats = snapshot.data!.docs;
+          final resolutionChats = resolutionSnapshot.data!.docs;
 
-          if (chats.isEmpty) {
-            return const Center(child: Text("No active chats available"));
-          }
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('downedLines')
+                .where('status', isEqualTo: 'attending')
+                .snapshots(),
+            builder: (context, downedLinesSnapshot) {
+              if (!downedLinesSnapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          return ListView.builder(
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              var chat = chats[index];
-              String chatId = chat.id;
+              // Filter downedLines to only include those with both supervisorId and technicianId
+              final downedLines = downedLinesSnapshot.data!.docs.where((line) {
+                final data = line.data() as Map<String, dynamic>;
+                return (data['supervisorId'] ?? '').isNotEmpty &&
+                    (data['technicianId'] ?? '').isNotEmpty;
+              }).toList();
 
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('resolutionChats')
-                    .doc(chatId)
-                    .collection('messages')
-                    .orderBy('timestamp', descending: true)
-                    .limit(1)
-                    .snapshots(),
-                builder: (context, messageSnapshot) {
-                  if (!messageSnapshot.hasData ||
-                      messageSnapshot.data!.docs.isEmpty) {
-                    // If there are no messages, do not display anything
-                    return const SizedBox.shrink();
+              // Combine resolutionChats and filtered downedLines into one list
+              final combinedChats = [
+                ...resolutionChats.map((chat) => {
+                      'type': 'resolutionChat',
+                      'data': chat,
+                    }),
+                ...downedLines.map((line) => {
+                      'type': 'downedLine',
+                      'data': line,
+                    }),
+              ];
+
+              if (combinedChats.isEmpty) {
+                return const Center(
+                    child: Text("No active chats or downed lines available"));
+              }
+
+              return ListView.builder(
+                itemCount: combinedChats.length,
+                itemBuilder: (context, index) {
+                  final chatItem = combinedChats[index];
+                  if (chatItem['type'] == 'resolutionChat') {
+                    var chat = chatItem['data'] as QueryDocumentSnapshot;
+                    String chatId = chat.id;
+
+                    return StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('resolutionChats')
+                          .doc(chatId)
+                          .collection('messages')
+                          .orderBy('timestamp', descending: true)
+                          .limit(1)
+                          .snapshots(),
+                      builder: (context, messageSnapshot) {
+                        if (!messageSnapshot.hasData ||
+                            messageSnapshot.data!.docs.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final lastMessageDoc = messageSnapshot.data!.docs.first;
+                        String lastMessageText = lastMessageDoc['text'];
+                        String senderId = lastMessageDoc['senderId'];
+                        DateTime timestamp =
+                            lastMessageDoc['timestamp'].toDate();
+                        String formattedTimestamp =
+                            DateFormat('d MMMM y HH:mm').format(timestamp);
+
+                        // Fetch the name of the other participant in the chat
+                        final participants =
+                            chat['participants'] as List<dynamic>;
+                        final otherUserId = participants.firstWhere(
+                          (id) => id != currentUserId,
+                          orElse: () => null,
+                        );
+
+                        return FutureBuilder<DocumentSnapshot>(
+                          future: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(otherUserId)
+                              .get(),
+                          builder: (context, userSnapshot) {
+                            if (!userSnapshot.hasData ||
+                                !userSnapshot.data!.exists) {
+                              return const SizedBox.shrink();
+                            }
+
+                            final userData = userSnapshot.data!.data()
+                                as Map<String, dynamic>;
+                            String otherUserName =
+                                userData['name'] ?? 'Unknown';
+
+                            return ReusableMessageNotification(
+                              title: otherUserName,
+                              dateTime: formattedTimestamp,
+                              description: lastMessageText.length > 20
+                                  ? '${lastMessageText.substring(0, 20)}...'
+                                  : lastMessageText,
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatPage(
+                                      chatName: otherUserName,
+                                      chatId: chatId,
+                                      isDownedLine: false,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    );
+                  } else if (chatItem['type'] == 'downedLine') {
+                    var downedLine = chatItem['data'] as QueryDocumentSnapshot;
+                    final lineData = downedLine.data() as Map<String, dynamic>;
+                    String downedLineId = downedLine.id;
+                    String lineName = lineData['lineName'];
+                    DateTime timestamp =
+                        (lineData['timestamp'] as Timestamp).toDate();
+                    String formattedTimestamp =
+                        DateFormat('d MMMM y HH:mm').format(timestamp);
+
+                    return ReusableMessageNotification(
+                      title: lineName,
+                      dateTime: formattedTimestamp,
+                      description: 'Line is currently attended',
+                      titleStyle: const TextStyle(
+                        color: Colors.red, // Make downedLines red
+                        fontWeight: FontWeight.bold,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChatPage(
+                              chatName: lineName,
+                              chatId: downedLineId,
+                              isDownedLine: true,
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   }
 
-                  final lastMessageDoc = messageSnapshot.data!.docs.first;
-
-                  String lastMessageText = lastMessageDoc['text'];
-                  String senderId = lastMessageDoc['senderId'];
-                  DateTime timestamp = lastMessageDoc['timestamp'].toDate();
-                  String formattedTimestamp =
-                      DateFormat('d MMMM y HH:mm').format(timestamp);
-
-                  // Fetch the sender's name from the 'users' collection
-                  return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(senderId)
-                        .get(),
-                    builder: (context, userSnapshot) {
-                      if (userSnapshot.connectionState ==
-                          ConnectionState.waiting) {
-                        return const SizedBox.shrink();
-                      }
-
-                      String lastMessageSender = 'Unknown';
-                      if (userSnapshot.hasData && userSnapshot.data != null) {
-                        final userData =
-                            userSnapshot.data!.data() as Map<String, dynamic>?;
-                        if (userData != null && userData.containsKey('name')) {
-                          lastMessageSender = userData['name'];
-                        }
-                      }
-
-                      return ReusableMessageNotification(
-                        title: lastMessageSender,
-                        dateTime: formattedTimestamp,
-                        description: lastMessageText.length > 20
-                            ? '${lastMessageText.substring(0, 20)}...'
-                            : lastMessageText,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatPage(
-                                chatName: lastMessageSender,
-                                chatId: chatId,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  );
+                  return const SizedBox.shrink();
                 },
               );
             },

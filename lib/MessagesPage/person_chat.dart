@@ -9,8 +9,14 @@ import 'package:intl/intl.dart';
 class ChatPage extends StatefulWidget {
   final String chatName;
   final String chatId;
+  final bool isDownedLine; // Indicates whether this is a downed line chat
 
-  const ChatPage({super.key, required this.chatName, required this.chatId});
+  const ChatPage({
+    super.key,
+    required this.chatName,
+    required this.chatId,
+    this.isDownedLine = false, // Defaults to false for `resolutionChats`
+  });
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -24,32 +30,28 @@ class _ChatPageState extends State<ChatPage> {
 
   void _sendMessage() {
     if (_messageController.text.isNotEmpty) {
-      _firestore
-          .collection('resolutionChats')
-          .doc(widget.chatId)
-          .collection('messages')
-          .add({
+      // Path for storing messages
+      final collectionPath = widget.isDownedLine
+          ? 'downedLines/${widget.chatId}/chats'
+          : 'resolutionChats/${widget.chatId}/messages';
+
+      _firestore.collection(collectionPath).add({
         'text': _messageController.text,
         'timestamp': DateTime.now(),
         'senderId': currentUserId,
       });
+
       _messageController.clear();
     }
   }
 
-  //   if (_messageController.text.isNotEmpty) {
-  //     setState(() {
-  //       _messages.add({
-  //         'text': _messageController.text,
-  //         'timestamp': DateTime.now(), // Save the current timestamp
-  //       });
-  //       _messageController.clear();
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
+    // Path for fetching messages
+    final collectionPath = widget.isDownedLine
+        ? 'downedLines/${widget.chatId}/chats'
+        : 'resolutionChats/${widget.chatId}/messages';
+
     return Scaffold(
       backgroundColor: GMCColors.white,
       appBar: AppBar(
@@ -75,9 +77,7 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: _firestore
-                  .collection('resolutionChats')
-                  .doc(widget.chatId)
-                  .collection('messages')
+                  .collection(collectionPath)
                   .orderBy('timestamp', descending: true)
                   .snapshots(),
               builder: (context, snapshot) {
@@ -97,7 +97,6 @@ class _ChatPageState extends State<ChatPage> {
                     String formattedDate =
                         DateFormat('d MMMM y HH:mm').format(timestamp);
 
-                    // Update Firestore path to fetch user data
                     return FutureBuilder<DocumentSnapshot>(
                       future:
                           _firestore.collection('users').doc(senderId).get(),
