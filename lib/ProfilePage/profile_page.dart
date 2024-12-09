@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(10.0),
       child: SizedBox(
         width: MyUtility(context).width,
         height: MyUtility(context).height,
@@ -48,8 +48,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     height: MyUtility(context).height * 0.8,
                     width: MyUtility(context).width * 0.9,
                     decoration: BoxDecoration(
-                        color: GMCColors.lightGrey,
-                        borderRadius: BorderRadius.circular(12)),
+                      color: GMCColors.lightGrey,
+                      borderRadius: BorderRadius.circular((12.0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(0, -4),
+                          blurRadius: 4.0,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(4, 0),
+                          blurRadius: 4.0,
+                        ),
+                      ],
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 10.0),
