@@ -59,6 +59,7 @@ class _LineAttendState extends State<LineAttend>
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: LineButton(
+                  lineID: widget.documentId,
                   lineLabel: widget.lineLabel,
                   isAttending: isAttending,
                   isOnline: false,
