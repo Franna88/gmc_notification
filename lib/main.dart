@@ -15,7 +15,7 @@ void main() async {
           apiKey: "AIzaSyDLq-iNSUPe1zlVI-6gdD1eqogjan5UhN4",
           authDomain: "gmc-95f76.firebaseapp.com",
           projectId: "gmc-95f76",
-          storageBucket: "gmc-95f76.appspot.com",
+          storageBucket: "gmc-95f76.firebasestorage.app",
           messagingSenderId: "495285712978",
           appId: "1:495285712978:web:739f64ebb49e9d5abac78b",
         ),

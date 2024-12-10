@@ -239,6 +239,7 @@ class _LineStatusState extends State<LineStatus> {
                             valueListenable: timerService.elapsedTimeNotifier,
                             builder: (context, elapsedTime, child) {
                               return LineButton(
+                                lineID: documentId,
                                 lineLabel: lineName,
                                 isOnline: online,
                                 navigatePage: online,
