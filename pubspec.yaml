@@ -112,4 +112,4 @@ flutter:
   # see https://flutter.dev/to/font-from-package
   assets:
     - images/
-    - assets/keys/serviceAccountKey.json
+  #  - assets/keys/serviceAccountKey.json
