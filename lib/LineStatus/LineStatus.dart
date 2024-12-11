@@ -240,34 +240,34 @@ class _LineStatusState extends State<LineStatus> {
                             bool isAttending = lineData['attending'];
                             String documentId = lineData.id;
 
-                          // TimerService instance for each line from UniversalTimer
-                          NewTimeService timerService =
-                              universalTimer.getTimerForLine(documentId);
-
+                            // TimerService instance for each line from UniversalTimer
+                            NewTimeService timerService =
+                                universalTimer.getTimerForLine(documentId);
 
                             print(
                                 'Line "$lineName" status is ${online ? 'online' : 'offline'}');
 
-                          return ValueListenableBuilder<int>(
-                            valueListenable: timerService.elapsedTimeNotifier,
-                            builder: (context, elapsedTime, child) {
-                              return LineButton(
-                                lineID: documentId,
-                                lineLabel: lineName,
-                                isOnline: online,
-                                navigatePage: online,
-                                isAttending: isAttending,
-                                elapsedTime: timerService.secondsElapsed,
-                                onTap: (int elapsedSeconds) {
-                                  widget.onLineSelected(
-                                      lineName, elapsedSeconds, documentId);
-                                },
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
+                            return ValueListenableBuilder<int>(
+                              valueListenable: timerService.elapsedTimeNotifier,
+                              builder: (context, elapsedTime, child) {
+                                return LineButton(
+                                  lineID: documentId,
+                                  lineLabel: lineName,
+                                  isOnline: online,
+                                  navigatePage: online,
+                                  isAttending: isAttending,
+                                  elapsedTime: timerService.secondsElapsed,
+                                  onTap: (int elapsedSeconds) {
+                                    widget.onLineSelected(
+                                        lineName, elapsedSeconds, documentId);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
