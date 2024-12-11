@@ -166,74 +166,87 @@ class _LineStatusState extends State<LineStatus> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MyUtility(context).width,
-      height: MyUtility(context).height,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 25),
-          Image.asset("images/GMC_Logo_White_Background_Black_Text 1.png"),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+        width: MyUtility(context).width,
+        height: MyUtility(context).height,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                GroupButton(
-                  buttonText: 'Group',
-                  onTap: () {},
+                Image.asset(
+                  "images/GMC_Logo_White_Background_Black_Text 1.png",
                 ),
-                const SizedBox(height: 20),
-                Container(
-                  height: MyUtility(context).height * 0.67,
-                  decoration: BoxDecoration(
-                    color: GMCColors.lightGrey,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(0, -4),
-                        blurRadius: 4.0,
-                      ),
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        offset: const Offset(4, 0),
-                        blurRadius: 4.0,
-                      ),
-                    ],
+              ],
+            ),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GroupButton(
+                    buttonText: 'Group',
+                    onTap: () {},
                   ),
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: systemsRef.snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
+                  const SizedBox(height: 20),
+                  Container(
+                    height: MyUtility(context).height * 0.67,
+                    decoration: BoxDecoration(
+                      color: GMCColors.lightGrey,
+                      borderRadius: BorderRadius.circular(12.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(0, -4),
+                          blurRadius: 4.0,
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(4, 0),
+                          blurRadius: 4.0,
+                        ),
+                      ],
+                    ),
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: systemsRef.snapshots(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
 
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
+                        if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        }
 
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(child: Text('No lines available'));
-                      }
+                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                          return const Center(
+                              child: Text('No lines available'));
+                        }
 
-                      return ListView.builder(
-                        padding: const EdgeInsets.all(8.0),
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          var lineData = snapshot.data!.docs[index];
-                          String lineName = lineData['line_Name'];
-                          bool online = lineData['online'];
-                          bool isAttending = lineData['attending'];
-                          String documentId = lineData.id;
+                        return ListView.builder(
+                          padding: const EdgeInsets.all(8.0),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            var lineData = snapshot.data!.docs[index];
+                            String lineName = lineData['line_Name'];
+                            bool online = lineData['online'];
+                            bool isAttending = lineData['attending'];
+                            String documentId = lineData.id;
 
                           // TimerService instance for each line from UniversalTimer
                           NewTimeService timerService =
                               universalTimer.getTimerForLine(documentId);
 
-                          print(
-                              'Line "$lineName" status is ${online ? 'online' : 'offline'}');
+
+                            print(
+                                'Line "$lineName" status is ${online ? 'online' : 'offline'}');
 
                           return ValueListenableBuilder<int>(
                             valueListenable: timerService.elapsedTimeNotifier,
@@ -256,11 +269,11 @@ class _LineStatusState extends State<LineStatus> {
                       );
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
