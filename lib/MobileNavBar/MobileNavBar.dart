@@ -57,7 +57,7 @@ class MobileNavBarState extends State<MobileNavBar> {
       showLineAttend = true;
 
       // Reuse the TimerService for the selected line
-      TimerService timerService = universalTimer.getTimerForLine(documentId);
+      NewTimeService timerService = universalTimer.getTimerForLine(documentId);
 
       // Debug to confirm timer state before navigating
       debugPrint(

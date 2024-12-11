@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 import 'package:flutter/material.dart';
+import 'package:gmc/LoginPages/login_page.dart';
 
 import 'package:gmc/MainComponants/reusable_black_textfield.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
@@ -19,6 +21,43 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController();
   final TextEditingController _profileNameController = TextEditingController();
 
+  // Logout function
+  void _logoutUser() async {
+    try {
+      await FirebaseAuth.instance.signOut(); // Sign out the current user
+      print("User successfully logged out.");
+
+      // Navigate back to the LoginPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
+    } catch (e) {
+      print("Error logging out: $e");
+      // Optionally show an error dialog
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Logout Failed'),
+            content:
+                Text('An error occurred while logging out. Please try again.'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -38,12 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Column(
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
+                  const SizedBox(height: 10),
                   Container(
                     height: MyUtility(context).height * 0.8,
                     width: MyUtility(context).width * 0.9,
@@ -83,6 +117,23 @@ class _ProfilePageState extends State<ProfilePage> {
                           BlackTextField(
                               title: 'Current Password',
                               controller: _profileCurrentPasswordController),
+                          const SizedBox(height: 30),
+                          // Add Logout Button
+                          ElevatedButton(
+                            onPressed: _logoutUser,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: GMCColors.darkBlue,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 30.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Logout',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ],
                       ),
                     ),

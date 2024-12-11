@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // Import Firebase Messaging
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:gmc/LineStatus/Reuseable/GroupButton.dart';
 import 'package:gmc/MainComponants/reusable_black_textfield.dart';
 import 'package:gmc/MobileNavBar/MobileNavBar.dart';
@@ -27,18 +29,57 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _initializeFirebase() async {
     try {
-      await Firebase.initializeApp(); // Ensure Firebase is initialized properly
-      _checkIfLoggedIn(); // Check if user is already logged in after Firebase initialization
+      await Firebase.initializeApp(); // Initialize Firebase
+      _checkIfLoggedIn(); // Check if user is already logged in
     } catch (e) {
       print('Error initializing Firebase: $e');
     }
   }
 
+  Future<void> _saveFCMToken(String userId) async {
+    try {
+      String? token =
+          await FirebaseMessaging.instance.getToken(); // Get the FCM token
+      if (token != null) {
+        // Save the token to Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'fcmToken': token,
+        });
+        print('FCM Token saved for user $userId: $token');
+      } else {
+        print('Failed to retrieve FCM token');
+      }
+    } catch (e) {
+      print('Error saving FCM token: $e');
+    }
+  }
+
+  void _listenForTokenRefresh(String userId) {
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      try {
+        // Update the token in Firestore when it changes
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({
+          'fcmToken': newToken,
+        });
+        print('FCM Token updated for user $userId: $newToken');
+      } catch (e) {
+        print('Error updating FCM token: $e');
+      }
+    });
+  }
+
   void _checkIfLoggedIn() {
     User? user = _auth.currentUser;
     if (user != null) {
-      // User is already logged in, navigate to the main page
       print("User already logged in, navigating to MobileNavBar.");
+      _saveFCMToken(user.uid); // Save FCM token for already logged-in user
+      _listenForTokenRefresh(user.uid); // Listen for token refresh
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -55,15 +96,20 @@ class _LoginPageState extends State<LoginPage> {
     String password = _loginPasswordController.text.trim();
 
     try {
-      // Attempt to sign in the user with Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      print("Login successful for user: ${userCredential.user?.uid}");
+      String userId = userCredential.user!.uid;
 
-      // If successful, navigate to the main app page
+      print("Login successful for user: $userId");
+
+      // Save FCM token and listen for token refresh
+      await _saveFCMToken(userId);
+      _listenForTokenRefresh(userId);
+
+      // Navigate to the main app page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -115,12 +161,10 @@ class _LoginPageState extends State<LoginPage> {
           }
 
           if (snapshot.hasData) {
-            // User is logged in, redirect to the main page
             print("User is logged in with UID: ${snapshot.data?.uid}");
             return const MobileNavBar();
           }
 
-          // User is not logged in, show the login page
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20.0),

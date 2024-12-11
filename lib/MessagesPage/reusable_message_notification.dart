@@ -8,6 +8,7 @@ class ReusableMessageNotification extends StatelessWidget {
   final String dateTime;
   final String description;
   final VoidCallback onPressed;
+  final TextStyle? titleStyle; // Optional custom style for the title
 
   const ReusableMessageNotification({
     super.key,
@@ -15,6 +16,7 @@ class ReusableMessageNotification extends StatelessWidget {
     required this.dateTime,
     required this.description,
     required this.onPressed,
+    this.titleStyle, // Accept optional titleStyle
   });
 
   @override
@@ -39,9 +41,9 @@ class ReusableMessageNotification extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStyles(context)
-                        .bold
-                        .copyWith(color: GMCColors.darkGrey),
+                    style: titleStyle ??
+                        TextStyles(context).bold.copyWith(
+                            color: GMCColors.darkGrey), // Default style
                   ),
                   Text(
                     dateTime,

@@ -7,8 +7,14 @@ plugins {
     id "com.google.gms.google-services"
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
-    namespace = "com.example.gmc"
+    namespace = "com.barefootbytes.gmc"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -18,20 +24,32 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = "1.8"
     }
 
     defaultConfig {
-        applicationId = "com.example.gmc"
+        applicationId = "com.barefootbytes.gmc"
         minSdk = 23 // Set explicitly to support Firebase Auth
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            keyAlias = keystoreProperties['keyAlias']
+            keyPassword = keystoreProperties['keyPassword']
+            storeFile = keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword = keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release // Explicitly assign the signing config
+            minifyEnabled true // Enables code shrinking, obfuscation, and optimization
+            shrinkResources true // Enables resource shrinking
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
@@ -43,11 +61,13 @@ flutter {
 // Apply the Google services plugin at the bottom
 apply plugin: 'com.google.gms.google-services'
 
-// You can also add Firebase dependencies here if needed, for example:
 dependencies {
-    // Firebase BoM (Bill of Materials)
+    // Firebase BoM
     implementation platform('com.google.firebase:firebase-bom:33.6.0')
 
-    // Example: Adding Firebase Analytics
+    // Firebase Analytics
     implementation 'com.google.firebase:firebase-analytics'
+
+    // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging'
 }
