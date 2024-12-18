@@ -142,6 +142,8 @@ class _LineStatusState extends State<LineStatus> {
                   'totalDownTime': '',
                   'supervisorId': '',
                   'supervisorName': '',
+                  'faultMessage': data['faultMessage'],
+                  'faultStatus': "offline",
                 });
 
                 // Update isAlreadyDown to true and clear the isUpdating flag after successful transaction
