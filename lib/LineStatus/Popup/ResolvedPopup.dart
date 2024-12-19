@@ -10,8 +10,13 @@ import 'package:path/path.dart' as path;
 
 class ResolvedPopup extends StatefulWidget {
   final String documentId;
+  final VoidCallback resolvedUpload;
 
-  const ResolvedPopup({super.key, required this.documentId});
+  const ResolvedPopup({
+    super.key,
+    required this.documentId,
+    required this.resolvedUpload,
+  });
 
   @override
   State<ResolvedPopup> createState() => _ResolvedPopupState();
@@ -80,7 +85,7 @@ class _ResolvedPopupState extends State<ResolvedPopup> {
       print("No image selected for upload.");
     }
 
-    // Prepare resolution data without timestamp
+    // Prepare resolution data
     Map<String, dynamic> resolutionData = {
       'description': _descriptionController.text,
       'imageUrl': imageUrl,
@@ -90,45 +95,40 @@ class _ResolvedPopupState extends State<ResolvedPopup> {
       print("Starting Firestore update...");
       print("Document ID to search for: ${widget.documentId}");
 
-      // Query the downedLines collection to find the correct document by lineId only
-      FirebaseFirestore.instance
+      // Query the downedLines collection
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('downedLines')
           .where('lineId', isEqualTo: widget.documentId)
           .orderBy('timestamp', descending: true)
           .limit(1)
-          .get()
-          .then((snapshot) async {
-        if (snapshot.docs.isNotEmpty) {
-          DocumentReference downedLineRef = snapshot.docs.first.reference;
+          .get();
 
-          print("Matching document found: ${downedLineRef.id}");
+      if (snapshot.docs.isNotEmpty) {
+        DocumentReference downedLineRef = snapshot.docs.first.reference;
 
-          // Update the document to add the resolution data
-          await downedLineRef.update({
-            'resolution': FieldValue.arrayUnion([resolutionData]),
-            'resolvedTimestamp':
-                FieldValue.serverTimestamp(), // Set timestamp separately
-          });
+        print("Matching document found: ${downedLineRef.id}");
 
-          print("Firestore update successful.");
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Resolution submitted successfully!')),
-          );
-          Navigator.of(context)
-              .pop(); // Close the popup after successful upload
-        } else {
-          print('No matching downedLines document found.');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('No matching document found to update.')),
-          );
-        }
-      }).catchError((error) {
-        print('Failed to get downedLines document: $error');
+        // Update the document to add the resolution data
+        await downedLineRef.update({
+          'resolution': FieldValue.arrayUnion([resolutionData]),
+          'resolvedTimestamp': FieldValue.serverTimestamp(),
+        });
+
+        print("Firestore update successful.");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit resolution: $error')),
+          const SnackBar(content: Text('Resolution submitted successfully!')),
         );
-      });
+
+        // Notify the parent widget and close the popup
+        widget.resolvedUpload();
+        Navigator.of(context).pop();
+      } else {
+        print('No matching downedLines document found.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('No matching document found to update.')),
+        );
+      }
     } catch (e) {
       print("Firestore update failed with error: $e");
       ScaffoldMessenger.of(context).showSnackBar(

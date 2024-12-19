@@ -10,8 +10,10 @@ import 'package:path/path.dart' as path;
 
 class CausePopup extends StatefulWidget {
   final String documentId;
+  final VoidCallback causeUpload;
 
-  const CausePopup({super.key, required this.documentId});
+  const CausePopup(
+      {super.key, required this.documentId, required this.causeUpload});
 
   @override
   State<CausePopup> createState() => _CausePopupState();
@@ -76,11 +78,9 @@ class _CausePopupState extends State<CausePopup> {
         });
         return;
       }
-    } else {
-      print("No image selected for upload.");
     }
 
-    // Prepare cause data without timestamp
+    // Prepare cause data
     Map<String, dynamic> causeData = {
       'description': _descriptionController.text,
       'imageUrl': imageUrl,
@@ -90,46 +90,39 @@ class _CausePopupState extends State<CausePopup> {
       print("Starting Firestore update...");
       print("Document ID to search for: ${widget.documentId}");
 
-      // Query the downedLines collection to find the correct document by lineId only
-      FirebaseFirestore.instance
+      // Query the downedLines collection
+      QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('downedLines')
           .where('lineId', isEqualTo: widget.documentId)
           .orderBy('timestamp', descending: true)
           .limit(1)
-          .get()
-          .then((snapshot) async {
-        if (snapshot.docs.isNotEmpty) {
-          DocumentReference downedLineRef = snapshot.docs.first.reference;
+          .get();
 
-          print("Matching document found: ${downedLineRef.id}");
+      if (snapshot.docs.isNotEmpty) {
+        DocumentReference downedLineRef = snapshot.docs.first.reference;
 
-          // Update the document to add the cause data
-          await downedLineRef.update({
-            'cause': FieldValue.arrayUnion([causeData]),
-            'timestamp':
-                FieldValue.serverTimestamp(), // Set timestamp separately
-          });
+        print("Matching document found: ${downedLineRef.id}");
 
-          print("Firestore update successful.");
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Issue submitted successfully!')),
-          );
-          Navigator.of(context)
-              .pop(); // Close the popup after successful upload
-        } else {
-          // No matching document found, log more information
-          print('No matching downedLines document found.');
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text('No matching document found to update.')),
-          );
-        }
-      }).catchError((error) {
-        print('Failed to get downedLines document: $error');
+        // Update the document to add the cause data
+        await downedLineRef.update({
+          'cause': FieldValue.arrayUnion([causeData]),
+          'timestamp': FieldValue.serverTimestamp(),
+        });
+
+        print("Firestore update successful.");
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to submit issue: $error')),
+            const SnackBar(content: Text('Issue submitted successfully!')));
+
+        // Notify the parent widget and close the popup
+        widget.causeUpload(); // Ensure this is called only once
+        Navigator.of(context).pop();
+      } else {
+        print('No matching downedLines document found.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('No matching document found to update.')),
         );
-      });
+      }
     } catch (e) {
       print("Firestore update failed with error: $e");
       ScaffoldMessenger.of(context).showSnackBar(

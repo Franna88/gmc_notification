@@ -32,6 +32,20 @@ class _LineAttendState extends State<LineAttend>
 
   late NewTimeService timerService;
   bool isAttending = false;
+  bool isCauseUploaded = false; // Track if the cause has been uploaded
+  bool isResolvedUploaded = false;
+
+  void _onCauseUploaded() {
+    setState(() {
+      isCauseUploaded = true;
+    });
+  }
+
+  void _onResolvedUploaded() {
+    setState(() {
+      isResolvedUploaded = true; // Update state on successful resolution upload
+    });
+  }
 
   @override
   void initState() {
@@ -63,14 +77,14 @@ class _LineAttendState extends State<LineAttend>
                   padding: const EdgeInsets.all(8.0),
                   child: LineButton(
                     lineID: widget.documentId,
-                  lineLabel: widget.lineLabel,
-                  isAttending: isAttending,
-                  isOnline: false,
-                  offlineUi: false,
-                  navigatePage: true,
-                  elapsedTime:
-                      elapsedSeconds, // Pass elapsed time to LineButton
-                  onTap: (_) {},
+                    lineLabel: widget.lineLabel,
+                    isAttending: isAttending,
+                    isOnline: false,
+                    offlineUi: false,
+                    navigatePage: true,
+                    elapsedTime:
+                        elapsedSeconds, // Pass elapsed time to LineButton
+                    onTap: (_) {},
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -118,28 +132,37 @@ class _LineAttendState extends State<LineAttend>
                         ),
                         AttendingButton(
                           buttonText: 'CAUSE',
-                          buttonColor: Colors.black,
+                          buttonColor:
+                              isCauseUploaded ? GMCColors.green : Colors.black,
                           onPressed: () {
                             showDialog(
                               useSafeArea: false,
                               context: context,
                               builder: (BuildContext context) {
                                 return CausePopup(
-                                    documentId: widget.documentId);
+                                  documentId: widget.documentId,
+                                  causeUpload:
+                                      _onCauseUploaded, // Pass callback
+                                );
                               },
                             );
                           },
                         ),
                         AttendingButton(
                           buttonText: 'RESOLVED',
-                          buttonColor: Colors.black,
+                          buttonColor: isResolvedUploaded
+                              ? GMCColors.green
+                              : Colors.black, // Update button color
                           onPressed: () {
                             showDialog(
                               useSafeArea: false,
                               context: context,
                               builder: (BuildContext context) {
                                 return ResolvedPopup(
-                                    documentId: widget.documentId);
+                                  documentId: widget.documentId,
+                                  resolvedUpload:
+                                      _onResolvedUploaded, // Pass callback
+                                );
                               },
                             );
                           },
