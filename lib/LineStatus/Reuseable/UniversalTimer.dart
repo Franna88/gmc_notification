@@ -85,6 +85,7 @@ class NewTimeService {
           .collection('systems')
           .doc(_lineId)
           .get();
+
       String message = "Production Line ${_lineId} has gone offline.";
       Map<String, dynamic> data = lineSnaphot.data() as Map<String, dynamic>;
       if (data.containsKey('message')) {
