@@ -63,14 +63,14 @@ class _LineAttendState extends State<LineAttend>
                   padding: const EdgeInsets.all(8.0),
                   child: LineButton(
                     lineID: widget.documentId,
-                  lineLabel: widget.lineLabel,
-                  isAttending: isAttending,
-                  isOnline: false,
-                  offlineUi: false,
-                  navigatePage: true,
-                  elapsedTime:
-                      elapsedSeconds, // Pass elapsed time to LineButton
-                  onTap: (_) {},
+                    lineLabel: widget.lineLabel,
+                    isAttending: isAttending,
+                    isOnline: false,
+                    offlineUi: false,
+                    navigatePage: true,
+                    elapsedTime:
+                        elapsedSeconds, // Pass elapsed time to LineButton
+                    onTap: (_) {},
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -144,7 +144,8 @@ class _LineAttendState extends State<LineAttend>
                             );
                           },
                         ),
-                        NotifyManagement(isNotified: true),
+                        NotifyManagement(
+                            isNotified: true, id: widget.documentId),
                       ],
                     ),
                   ),
