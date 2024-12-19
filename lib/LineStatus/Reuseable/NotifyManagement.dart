@@ -1,16 +1,50 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
 import 'package:gmc/myutility.dart';
 
 class NotifyManagement extends StatefulWidget {
   final bool isNotified;
-  const NotifyManagement({super.key, required this.isNotified});
+  final String id;
+  const NotifyManagement(
+      {super.key, required this.isNotified, required this.id});
 
   @override
   State<NotifyManagement> createState() => _NotifyManagementState();
 }
 
 class _NotifyManagementState extends State<NotifyManagement> {
+  String _message = '';
+
+  @override
+  void initState() {
+    _getMessage();
+    super.initState();
+  }
+
+  Future<void> _getMessage() async {
+    try {
+      // Get the message from Firestore
+      final doc = await FirebaseFirestore.instance
+          .collection('systems')
+          .doc(widget.id)
+          .get();
+      String message = "Default Message";
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      if (data.containsKey('message')) {
+        message = doc.get('message');
+      } else {
+        print('Message key does not exist.');
+      }
+
+      setState(() {
+        _message = message;
+      });
+    } catch (e) {
+      print('Error getting message: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Visibility(
@@ -23,7 +57,7 @@ class _NotifyManagementState extends State<NotifyManagement> {
             color: GMCColors.darkTeal,
             borderRadius: BorderRadius.circular(5),
           ),
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +72,7 @@ class _NotifyManagementState extends State<NotifyManagement> {
                   ),
                 ),
                 Text(
-                  '15 Minutes have passed, Management Notified',
+                  _message,
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontWeight: FontWeight.w600,

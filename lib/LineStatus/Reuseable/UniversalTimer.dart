@@ -81,6 +81,19 @@ class NewTimeService {
           .where('role', isEqualTo: 'technician')
           .get();
 
+      var lineSnaphot = await FirebaseFirestore.instance
+          .collection('systems')
+          .doc(_lineId)
+          .get();
+
+      String message = "Production Line ${_lineId} has gone offline.";
+      Map<String, dynamic> data = lineSnaphot.data() as Map<String, dynamic>;
+      if (data.containsKey('message')) {
+        message = lineSnaphot.get('message');
+      } else {
+        print('Message key does not exist.');
+      }
+
       if (techniciansSnapshot.docs.isNotEmpty) {
         // Initialize NotificationService and ensure credentials are loaded
         final notificationService = NotificationService();
@@ -96,8 +109,7 @@ class NewTimeService {
             await notificationService.sendNotification(
               token: technicianToken,
               title: 'Line Offline: $_lineId',
-              body:
-                  'Production line $_lineId has gone offline. Please check immediately.',
+              body: message,
             );
             debugPrint(
                 'Notification sent to $technicianName for line $_lineId');

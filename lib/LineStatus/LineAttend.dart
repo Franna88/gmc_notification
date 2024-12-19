@@ -167,7 +167,8 @@ class _LineAttendState extends State<LineAttend>
                             );
                           },
                         ),
-                        NotifyManagement(isNotified: true),
+                        NotifyManagement(
+                            isNotified: true, id: widget.documentId),
                       ],
                     ),
                   ),

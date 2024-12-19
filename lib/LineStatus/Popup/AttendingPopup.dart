@@ -173,6 +173,8 @@ class _AttendingPopupState extends State<AttendingPopup> {
                         } else {
                           print('No logged-in user found.');
                         }
+                        // close dialog
+                        Navigator.pop(context);
                       },
                       buttonColor: GMCColors.orange,
                       buttonText: "Accept",
