@@ -142,7 +142,7 @@ class _LineStatusState extends State<LineStatus> {
                   'totalDownTime': '',
                   'supervisorId': '',
                   'supervisorName': '',
-                  'faultMessage': data['faultMessage'],
+                  'faultMessage': data['message'],
                   'faultStatus': "offline",
                 });
 

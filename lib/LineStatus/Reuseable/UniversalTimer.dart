@@ -74,16 +74,19 @@ class NewTimeService {
   Future<void> notifyTechnicians() async {
     try {
       debugPrint('Fetching technician details for notifications');
-
+      DocumentSnapshot<Map<String, dynamic>> lineSnaphot =
+          await FirebaseFirestore.instance
+              .collection('systems')
+              .doc(_lineId)
+              .get();
+      Map<String, dynamic> lineData =
+          lineSnaphot.data() as Map<String, dynamic>;
+      String technicianName = lineData['technicianName'];
       // Fetch all users with the role of 'technician'
       var techniciansSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('role', isEqualTo: 'technician')
-          .get();
-
-      var lineSnaphot = await FirebaseFirestore.instance
-          .collection('systems')
-          .doc(_lineId)
+          .where('name', isEqualTo: technicianName)
           .get();
 
       String message = "Production Line ${_lineId} has gone offline.";
