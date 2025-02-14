@@ -84,7 +84,7 @@ class _LineAttendState extends State<LineAttend>
                     navigatePage: true,
                     elapsedTime:
                         elapsedSeconds, // Pass elapsed time to LineButton
-                    onTap: (_) {},
+                    onTap: (_) {}, lineProduction: 'PU foaming',
                   ),
                 ),
                 const SizedBox(height: 20),

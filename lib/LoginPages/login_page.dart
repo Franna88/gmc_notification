@@ -7,6 +7,7 @@ import 'package:gmc/LineStatus/Reuseable/GroupButton.dart';
 import 'package:gmc/MainComponants/reusable_black_textfield.dart';
 import 'package:gmc/MobileNavBar/MobileNavBar.dart';
 import 'package:gmc/myutility.dart';
+import 'diagonal_painter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -165,39 +166,67 @@ class _LoginPageState extends State<LoginPage> {
             return const MobileNavBar();
           }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'images/GMC_Logo_White_Background_Black_Text 1.png',
-                      width: MyUtility(context).width * 0.4,
-                      height: MyUtility(context).height * 0.3,
+          return Stack(
+            children: [
+              CustomPaint(
+                size: Size(MyUtility(context).width, MyUtility(context).height),
+                painter: DiagonalPainter(),
+              ),
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'images/Antolin.png',
+                          width: MyUtility(context).width * 0.75,
+                          height: MyUtility(context).height * 0.35,
+                        ),
+                        const SizedBox(height: 50),
+                        BlackTextField(
+                          title: 'Username',
+                          controller: _loginEmailController,
+                          width: MyUtility(context).width * 0.77,
+                        ),
+                        const SizedBox(height: 20),
+                        BlackTextField(
+                          title: 'Password',
+                          controller: _loginPasswordController,
+                          obscureText: true,
+                          width: MyUtility(context).width * 0.77,
+                        ),
+                        SizedBox(
+                          width: MyUtility(context).width * 0.79,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                // Add forgot password functionality
+                              },
+                              child: const Text(
+                                'Forgot Password ?',
+                                style: TextStyle(
+                                  color: Color(0xFF001E64),
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: MyUtility(context).height * 0.1),
+                        GroupButton(
+                          buttonText: 'LOGIN',
+                          onTap: _loginUser,
+                          centerText: true,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    BlackTextField(
-                      title: 'Email',
-                      controller: _loginEmailController,
-                    ),
-                    const SizedBox(height: 10),
-                    BlackTextField(
-                      title: 'Password',
-                      controller: _loginPasswordController,
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 30),
-                    GroupButton(
-                      buttonText: 'Login',
-                      onTap: _loginUser,
-                      centerText: true,
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           );
         },
       ),

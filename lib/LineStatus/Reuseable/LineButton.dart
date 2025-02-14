@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gmc/LineStatus/Reuseable/UniversalTimer.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
 import 'package:gmc/myutility.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ class LineButton extends StatefulWidget {
   Function? onLongTap;
   bool offlineUi;
   bool navigatePage;
+  final String lineProduction;
 
   LineButton({
     required this.lineLabel,
@@ -28,6 +30,7 @@ class LineButton extends StatefulWidget {
     required this.elapsedTime, // Initialized elapsedTime parameter
     required this.onTap,
     required this.lineID,
+    required this.lineProduction,
     this.onLongTap,
     this.offlineUi = true,
     this.navigatePage = true,
@@ -144,22 +147,25 @@ class _LineButtonState extends State<LineButton> {
       animation: UniversalTimer(),
       builder: (context, _) {
         return GestureDetector(
-          onTap: widget.navigatePage
-              ? null
-              : () {
-                  setState(() {
-                    widget.isOnline = !widget.isOnline;
+          //  onTap: widget.navigatePage
+          //     ? null
+          //     : () {
+          //         setState(() {
+          //           widget.isOnline = !widget.isOnline;
+          onTap: () {
+            setState(() {
+              widget.isOnline = !widget.isOnline;
 
-                    if (widget.isOnline) {
-                      timerService.reset();
-                    } else {
-                      timerService.start();
-                    }
-                  });
+              if (widget.isOnline) {
+                timerService.reset();
+              } else {
+                timerService.start();
+              }
+            });
 
-                  // Pass the current elapsed time to the parent callback
-                  widget.onTap(timerService.secondsElapsed);
-                },
+            // Pass the current elapsed time to the parent callback
+            widget.onTap(timerService.secondsElapsed);
+          },
           onLongPress: () async {
             final newStatus = !widget.isOnline; // Toggle the status
             try {
@@ -198,8 +204,8 @@ class _LineButtonState extends State<LineButton> {
                           decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(11),
-                              topRight: Radius.circular(11),
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
                             ),
                           ),
                           padding: const EdgeInsets.all(8.0),
@@ -216,24 +222,23 @@ class _LineButtonState extends State<LineButton> {
                         decoration: BoxDecoration(
                           color: Colors.black,
                           borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(11),
-                            topRight: Radius.circular(11),
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
                           ),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 24.0, vertical: 8.0),
+                            horizontal: 24.0, vertical: 1.0),
                         child: Text(
                           widget.isOnline
                               ? 'Online' // Display "Online" when the line is online
                               : timerService.secondsElapsed < 10
                                   ? 'Attention' // Display "Attention" when offline and yellow
                                   : 'Offline', // Display "Offline" when offline and red
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
+                          style: GoogleFonts.roboto(
                             color: widget.isOnline
                                 ? GMCColors.green
                                 : GMCColors.red,
-                            fontSize: 16,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -255,42 +260,50 @@ class _LineButtonState extends State<LineButton> {
                   ),
                   child: Stack(
                     children: [
-                      // Centered text
+                      // Left-aligned lineLabel
                       Align(
-                        alignment: Alignment.center,
-                        child: widget.isOnline
-                            ? Text(
-                                widget.lineLabel,
-                                style: const TextStyle(
-                                  fontFamily: 'Roboto',
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            : Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    widget.lineLabel,
-                                    style: const TextStyle(
-                                      fontFamily: 'Roboto',
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    formatTime(widget.elapsedTime),
-                                    style: const TextStyle(
-                                      fontFamily: 'Roboto',
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Text(
+                            widget.lineLabel,
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Center-aligned timer when offline
+                      if (!widget.isOnline)
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            formatTime(widget.elapsedTime),
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      // Right-aligned lineProduction
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            right: documentUrls.isNotEmpty ? 48.0 : 16.0,
+                          ),
+                          child: Text(
+                            widget.lineProduction,
+                            style: GoogleFonts.roboto(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ),
                       // Download button positioned to the right
                       if (documentUrls.isNotEmpty)
