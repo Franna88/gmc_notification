@@ -49,8 +49,8 @@ class NewTimeService {
       _secondsElapsed++;
       elapsedTimeNotifier.value = _secondsElapsed;
       _notifier.notifyListeners();
-      debugPrint(
-          'Timer tick: $_secondsElapsed seconds for line $_lineId'); // Debug log
+      // debugPrint(
+      //     'Timer tick: $_secondsElapsed seconds for line $_lineId'); // Debug log
 
       // Check if elapsed time has reached the threshold for supervisor addition
       if (_secondsElapsed == 30) {

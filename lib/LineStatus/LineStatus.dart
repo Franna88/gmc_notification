@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:gmc/LineStatus/Reuseable/GroupButton.dart';
+import 'package:gmc/LineStatus/Reuseable/TabSelection.dart';
+import 'package:gmc/LineStatus/dropdown/LineSelectDropdown.dart';
 import 'package:gmc/LineStatus/Reuseable/LineButton.dart';
 import 'package:gmc/LineStatus/Reuseable/UniversalTimer.dart';
 import 'package:gmc/Themes/gmc_colors.dart';
@@ -25,6 +26,7 @@ class _LineStatusState extends State<LineStatus> {
       FirebaseFirestore.instance.collection('downedLines');
 
   final UniversalTimer universalTimer = UniversalTimer();
+  int _selectedTabIndex = 0; // 0 for Roofing, 1 for Side Panels
 
   @override
   void initState() {
@@ -177,10 +179,10 @@ class _LineStatusState extends State<LineStatus> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "images/GMC_Logo_White_Background_Black_Text 1.png",
+                  "images/Antolin.png",
                 ),
               ],
             ),
@@ -190,13 +192,24 @@ class _LineStatusState extends State<LineStatus> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GroupButton(
-                    buttonText: 'Group',
-                    onTap: () {},
+                  LineSelectDropdown(
+                      lines: ['Line 1', 'Line 2', 'Line 3', 'Line 4'],
+                      onLineSelected: (String line) {
+                        // TODO: Implement line selection handling
+                        print('Selected line: $line');
+                      },
+                      selectedLine: 'Line 1'),
+                  const SizedBox(height: 40),
+
+                  // Add tab buttons here, right before the container
+                  TabSelector(
+                    selectedIndex: _selectedTabIndex,
+                    onTabSelected: (index) =>
+                        setState(() => _selectedTabIndex = index),
+                    tabLabels: const ['ROOFING', 'SIDE PANELS'],
                   ),
-                  const SizedBox(height: 20),
                   Container(
-                    height: MyUtility(context).height * 0.67,
+                    height: MyUtility(context).height * 0.63,
                     decoration: BoxDecoration(
                       color: GMCColors.lightGrey,
                       borderRadius: BorderRadius.circular(12.0),
@@ -263,6 +276,7 @@ class _LineStatusState extends State<LineStatus> {
                                     widget.onLineSelected(
                                         lineName, elapsedSeconds, documentId);
                                   },
+                                  lineProduction: 'PU foaming',
                                 );
                               },
                             );
