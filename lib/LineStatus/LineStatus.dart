@@ -170,12 +170,13 @@ class _LineStatusState extends State<LineStatus> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
+    return SingleChildScrollView(
       child: Container(
-        width: MyUtility(context).width,
-        height: MyUtility(context).height,
+        height: MediaQuery.of(context).size.height -
+            kBottomNavigationBarHeight -
+            20,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -187,105 +188,112 @@ class _LineStatusState extends State<LineStatus> {
               ],
             ),
             const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  LineSelectDropdown(
-                      lines: ['Line 1', 'Line 2', 'Line 3', 'Line 4'],
-                      onLineSelected: (String line) {
-                        // TODO: Implement line selection handling
-                        print('Selected line: $line');
-                      },
-                      selectedLine: 'Line 1'),
-                  const SizedBox(height: 40),
-
-                  // Add tab buttons here, right before the container
-                  TabSelector(
-                    selectedIndex: _selectedTabIndex,
-                    onTabSelected: (index) =>
-                        setState(() => _selectedTabIndex = index),
-                    tabLabels: const ['ROOFING', 'SIDE PANELS'],
-                  ),
-                  Container(
-                    height: MyUtility(context).height * 0.63,
-                    decoration: BoxDecoration(
-                      color: GMCColors.lightGrey,
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: const Offset(0, -4),
-                          blurRadius: 4.0,
-                        ),
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          offset: const Offset(4, 0),
-                          blurRadius: 4.0,
-                        ),
-                      ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TabSelector(
+                      selectedIndex: _selectedTabIndex,
+                      onTabSelected: (index) =>
+                          setState(() => _selectedTabIndex = index),
+                      tabLabels: const ['ROOFING', 'SIDE PANELS'],
                     ),
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: systemsRef.snapshots(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+                    const SizedBox(height: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: LineSelectDropdown(
+                        lines: ['Line 1', 'Line 2', 'Line 3'],
+                        selectedLine: 'Line 1',
+                        onLineSelected: (String line) {
+                          // TODO: Implement line selection handling
+                          print('Selected line: $line');
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: GMCColors.lightGrey,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              offset: const Offset(0, -4),
+                              blurRadius: 4,
+                            ),
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              offset: const Offset(4, 0),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                        child: StreamBuilder<QuerySnapshot>(
+                          stream: systemsRef.snapshots(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
 
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
 
-                        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                          return const Center(
-                              child: Text('No lines available'));
-                        }
+                            if (!snapshot.hasData ||
+                                snapshot.data!.docs.isEmpty) {
+                              return const Center(
+                                  child: Text('No lines available'));
+                            }
 
-                        return ListView.builder(
-                          padding: const EdgeInsets.all(8.0),
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            var lineData = snapshot.data!.docs[index];
-                            String lineName = lineData['line_Name'];
-                            bool online = lineData['online'];
-                            bool isAttending = lineData['attending'];
-                            String documentId = lineData.id;
+                            return ListView.builder(
+                              padding: const EdgeInsets.all(8.0),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                var lineData = snapshot.data!.docs[index];
+                                String lineName = lineData['line_Name'];
+                                bool online = lineData['online'];
+                                bool isAttending = lineData['attending'];
+                                String documentId = lineData.id;
 
-                            // TimerService instance for each line from UniversalTimer
-                            NewTimeService timerService =
-                                universalTimer.getTimerForLine(documentId);
+                                // TimerService instance for each line from UniversalTimer
+                                NewTimeService timerService =
+                                    universalTimer.getTimerForLine(documentId);
 
-                            print(
-                                'Line "$lineName" status is ${online ? 'online' : 'offline'}');
+                                print(
+                                    'Line "$lineName" status is ${online ? 'online' : 'offline'}');
 
-                            return ValueListenableBuilder<int>(
-                              valueListenable: timerService.elapsedTimeNotifier,
-                              builder: (context, elapsedTime, child) {
-                                return LineButton(
-                                  lineID: documentId,
-                                  lineLabel: lineName,
-                                  isOnline: online,
-                                  navigatePage: online,
-                                  isAttending: isAttending,
-                                  elapsedTime: timerService.secondsElapsed,
-                                  onTap: (int elapsedSeconds) {
-                                    widget.onLineSelected(
-                                        lineName, elapsedSeconds, documentId);
+                                return ValueListenableBuilder<int>(
+                                  valueListenable:
+                                      timerService.elapsedTimeNotifier,
+                                  builder: (context, elapsedTime, child) {
+                                    return LineButton(
+                                      lineID: documentId,
+                                      lineLabel: lineName,
+                                      isOnline: online,
+                                      navigatePage: online,
+                                      isAttending: isAttending,
+                                      elapsedTime: timerService.secondsElapsed,
+                                      onTap: (int elapsedSeconds) {
+                                        widget.onLineSelected(lineName,
+                                            elapsedSeconds, documentId);
+                                      },
+                                      lineProduction: 'PU foaming',
+                                    );
                                   },
-                                  lineProduction: 'PU foaming',
                                 );
                               },
                             );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],

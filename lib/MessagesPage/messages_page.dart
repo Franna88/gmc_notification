@@ -25,28 +25,37 @@ class _MessagesPageState extends State<MessagesPage>
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - kBottomNavigationBarHeight,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Image.asset(
-                "images/GMC_Logo_White_Background_Black_Text 1.png",
-              ),
-            ],
+          // Logo
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Image.asset(
+                  "images/GMC_Logo_White_Background_Black_Text 1.png",
+                  height: 40,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 20),
+
+          const SizedBox(height: 16),
+
           // Tab Bar
           Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Container(
+              height: 48,
               decoration: const BoxDecoration(
-                color: GMCColors.darkGrey, // Background color for the TabBar
+                color: GMCColors.darkGrey,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12), // Rounded top left corner
-                  topRight: Radius.circular(12), // Rounded top right corner
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
                 ),
               ),
               child: TabBar(
@@ -121,16 +130,13 @@ class _MessagesPageState extends State<MessagesPage>
             ),
           ),
 
-          // Grey Container with Tab Views
+          // Tab View Content
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                // Messages Tab Content
-                const MessagesTab(),
-
-                // Contacts Tab Content
-                const ContactTab(),
+              children: const [
+                MessagesTab(),
+                ContactTab(),
               ],
             ),
           ),

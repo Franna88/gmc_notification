@@ -44,3 +44,9 @@ app.*.map.json
 
 # Service Account Key
 assets/keys
+
+# Firebase configuration
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+assets/keys/

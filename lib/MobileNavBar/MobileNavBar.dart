@@ -79,91 +79,87 @@ class MobileNavBarState extends State<MobileNavBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: PageView(
-        controller: _pageController,
-        physics:
-            const NeverScrollableScrollPhysics(), // Prevent swipe navigation
-        children: [
-          Container(), // Placeholder for Dashboard
-          const MessagesPage(),
-          LineStatus(
-            onLineSelected: _onLineSelected,
-          ),
-          // MaintenanceHome(),
-          // MaintenanceSectionMain(),
-          const ProfilePage(),
-          LineAttend(
-            lineLabel: lineLabel,
-            documentId: documentId,
-            timerService: universalTimer.getTimerForLine(documentId),
-          ),
-          MaintenanceHome(
-            pageController: _pageController,
-          ),
-          MaintenanceSectionMain(),
-        ],
-      ),
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: const Color(0xFF242728),
-        ),
-        child: BottomNavigationBar(
-          backgroundColor: const Color(0xFF242728),
-          type: BottomNavigationBarType.fixed,
-          elevation: 0,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'images/Dashboard.svg',
-                color: _selectedIndex == 0
-                    ? const Color(0xFF25CFA2)
-                    : GMCColors.white,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Dashboard',
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            Container(), // Dashboard placeholder
+            const MessagesPage(),
+            LineStatus(
+              onLineSelected: _onLineSelected,
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'images/Chat.svg',
-                color: _selectedIndex == 1
-                    ? const Color(0xFF25CFA2)
-                    : GMCColors.white,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Messages',
+            const ProfilePage(),
+            LineAttend(
+              lineLabel: lineLabel,
+              documentId: documentId,
+              timerService: universalTimer.getTimerForLine(documentId),
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'images/Lines.svg',
-                color: _selectedIndex == 2
-                    ? const Color(0xFF25CFA2)
-                    : GMCColors.white,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Lines',
+            MaintenanceHome(
+              pageController: _pageController,
             ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'images/person.svg',
-                color: _selectedIndex == 3
-                    ? const Color(0xFF25CFA2)
-                    : GMCColors.white,
-                height: 24,
-                width: 24,
-              ),
-              label: 'Profile',
-            ),
+            MaintenanceSectionMain(),
           ],
-          currentIndex: _selectedIndex,
-          selectedItemColor: const Color(0xFF25CFA2),
-          unselectedItemColor: GMCColors.white,
-          onTap: _onItemTapped,
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF242728),
+        type: BottomNavigationBarType.fixed,
+        elevation: 0,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'images/Dashboard.svg',
+              color: _selectedIndex == 0
+                  ? const Color(0xFF25CFA2)
+                  : GMCColors.white,
+              height: 20,
+              width: 20,
+            ),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'images/Chat.svg',
+              color: _selectedIndex == 1
+                  ? const Color(0xFF25CFA2)
+                  : GMCColors.white,
+              height: 20,
+              width: 20,
+            ),
+            label: 'Messages',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'images/Lines.svg',
+              color: _selectedIndex == 2
+                  ? const Color(0xFF25CFA2)
+                  : GMCColors.white,
+              height: 20,
+              width: 20,
+            ),
+            label: 'Lines',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'images/person.svg',
+              color: _selectedIndex == 3
+                  ? const Color(0xFF25CFA2)
+                  : GMCColors.white,
+              height: 20,
+              width: 20,
+            ),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: const Color(0xFF25CFA2),
+        unselectedItemColor: GMCColors.white,
+        onTap: _onItemTapped,
       ),
     );
   }
