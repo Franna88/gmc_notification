@@ -7,10 +7,14 @@ import 'package:gmc/myutility.dart';
 
 class MaintenanceHome extends StatefulWidget {
   final PageController pageController;
+  final String lineLabel;
+  final String documentId;
 
   const MaintenanceHome({
     super.key,
     required this.pageController,
+    required this.lineLabel,
+    required this.documentId,
   });
 
   @override
@@ -32,7 +36,7 @@ class _MaintenanceHomeState extends State<MaintenanceHome> {
             "images/Antolin.png",
           ),
           LineSectionContainer(
-            leftText: "Line 3",
+            leftText: widget.lineLabel,
             rightText: "Roof Lining Merge",
           ),
           Expanded(
@@ -58,32 +62,36 @@ class _MaintenanceHomeState extends State<MaintenanceHome> {
                 children: [
                   MaintenanceContainer(
                     isInMaintenance: true,
-                    operationNumber: "OP 40.1",
-                    operationName: "Press 1 Covering press",
+                    operationNumber: "OP 30.1",
+                    operationName: "Press Left",
                     maintenanceTimer: const Duration(seconds: 45),
                     onTap: _navigateToMaintenanceSection,
+                    documentId: widget.documentId,
                   ),
                   const SizedBox(height: 8),
                   MaintenanceContainer(
                     isInMaintenance: false,
-                    operationNumber: "OP 50.2",
-                    operationName: "Assembly Station 2",
+                    operationNumber: "OP 30.2",
+                    operationName: "Press Right",
                     scheduledMaintenanceTime: "14:30",
                     onTap: _navigateToMaintenanceSection,
+                    documentId: widget.documentId,
                   ),
                   const SizedBox(height: 8),
                   MaintenanceContainer(
                     isInMaintenance: false,
-                    operationNumber: "OP 30.1",
-                    operationName: "Cutting Station",
+                    operationNumber: "OP 30.3",
+                    operationName: "Press Left",
                     onTap: _navigateToMaintenanceSection,
+                    documentId: widget.documentId,
                   ),
                   const SizedBox(height: 8),
                   MaintenanceContainer(
                     isInMaintenance: false,
-                    operationNumber: "OP 60.3",
-                    operationName: "Quality Check",
+                    operationNumber: "OP 30.4",
+                    operationName: "Press Right",
                     onTap: _navigateToMaintenanceSection,
+                    documentId: widget.documentId,
                   ),
                 ],
               ),

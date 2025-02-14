@@ -97,6 +97,8 @@ class MobileNavBarState extends State<MobileNavBar> {
             ),
             MaintenanceHome(
               pageController: _pageController,
+              lineLabel: lineLabel,
+              documentId: documentId,
             ),
             MaintenanceSectionMain(),
           ],

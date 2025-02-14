@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gmc/myutility.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 
 class MaintenanceContainer extends StatefulWidget {
@@ -10,15 +11,17 @@ class MaintenanceContainer extends StatefulWidget {
   final String? scheduledMaintenanceTime;
   final Duration maintenanceTimer;
   final VoidCallback? onTap;
+  final String documentId;
 
   const MaintenanceContainer({
     super.key,
     this.isInMaintenance = false,
-    this.operationNumber = 'OP 40.1',
-    this.operationName = 'Press 1 Covering press',
+    required this.operationNumber,
+    required this.operationName,
     this.scheduledMaintenanceTime,
     this.maintenanceTimer = Duration.zero,
     this.onTap,
+    required this.documentId,
   });
 
   @override
@@ -26,6 +29,38 @@ class MaintenanceContainer extends StatefulWidget {
 }
 
 class _MaintenanceContainerState extends State<MaintenanceContainer> {
+  bool isOnline = true;
+  StreamSubscription? _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.operationNumber == "OP 30.2") {
+      _listenToOnlineStatus();
+    }
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  void _listenToOnlineStatus() {
+    final systemsRef = FirebaseFirestore.instance.collection('systems');
+    _subscription = systemsRef
+        .doc(widget.documentId)
+        .snapshots()
+        .listen((DocumentSnapshot snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        setState(() {
+          isOnline = data['online'] ?? true;
+        });
+      }
+    });
+  }
+
   String get elapsedTime {
     final minutes = widget.maintenanceTimer.inMinutes;
     final hours = minutes ~/ 60;
@@ -36,6 +71,8 @@ class _MaintenanceContainerState extends State<MaintenanceContainer> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showOffline = widget.operationNumber == "OP 30.2" && !isOnline;
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -86,10 +123,13 @@ class _MaintenanceContainerState extends State<MaintenanceContainer> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            widget.isInMaintenance ? 'Maintenance' : 'Online',
+                            widget.isInMaintenance
+                                ? 'Maintenance'
+                                : (showOffline ? 'Offline' : 'Online'),
                             style: GoogleFonts.inter(
                               fontSize: 13,
                               fontWeight: FontWeight.w400,
+                              color: showOffline ? Colors.red : null,
                             ),
                           ),
                           if (widget.isInMaintenance)
@@ -169,9 +209,11 @@ class _MaintenanceContainerState extends State<MaintenanceContainer> {
               Container(
                 width: 18,
                 decoration: BoxDecoration(
-                  color: widget.isInMaintenance
-                      ? const Color(0xFFF29D4E)
-                      : const Color(0xFF639847),
+                  color: showOffline
+                      ? Colors.red
+                      : (widget.isInMaintenance
+                          ? const Color(0xFFF29D4E)
+                          : const Color(0xFF639847)),
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(8),
                     bottomRight: Radius.circular(8),
